@@ -2,10 +2,6 @@
 import './App.css'
 import SearchEngine from "./SearchEngine/SearchEngine";
 
-const ip: string = "127.0.0.1";
-const port: string = "8080";
-const url: string = "http://" + ip + ":" + port;
-
 
 function App() {
   return (
@@ -14,7 +10,7 @@ function App() {
         SearchEngine:
       </p>
       {/* <SearchEngine */}
-      <SearchEngine backendUrl = {url} />
+      <SearchEngine />
     </>
   )
 }
