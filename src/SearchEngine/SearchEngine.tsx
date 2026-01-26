@@ -8,6 +8,14 @@ const ip: string = "127.0.0.1";
 const port: string = "8080";
 const url: string = "http://" + ip + ":" + port;
 
+const SUGGESTED_QUERIES: string[] = [
+  "diabetes treatment",
+  "lung cancer diagnosis",
+  "covid-19 vaccine",
+  "hypertension risk factors",
+  "Alzheimer disease biomarker",
+];
+
 interface SearchEngineProps {
   // backendUrl: string;
 }
@@ -18,17 +26,20 @@ const SearchEngine: React.FC<SearchEngineProps> = ({  }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [searchedQuery, setSearchedQuery] = useState<string>("");
+  const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
 
-  const handleSearch = async (): Promise<void> => {
-    if (!query.trim()) return;
+  const handleSearch = async (searchText?: string): Promise<void> => {
+    const q = (searchText ?? query).trim();
+    if (!q) return;
 
+    setShowSuggestions(false);
     setLoading(true);
     setError(null);
-    setSearchedQuery(query);
+    setSearchedQuery(q);
 
     try {
       const res = await fetch(
-        `${url}/search?q=${encodeURIComponent(query)}&k=3`
+        `${url}/search?q=${encodeURIComponent(q)}&k=10`
       );
 
       if (!res.ok) {
@@ -73,15 +84,42 @@ const SearchEngine: React.FC<SearchEngineProps> = ({  }) => {
     <div className="search-engine">
       <h1 className="search-title">PubMed Search Engine</h1>
 
+      <p className="search-origin">
+        <b>Search data origin: </b>
+        <a href="https://huggingface.co/datasets/MedRAG/pubmed" target="_blank" rel="noopener noreferrer">MedRAG PubMed Dataset</a>
+         - 23.9 million PubMed abstracts, index size: 50GB, stored in AWS EBS
+      </p>
+
       <div className="search-bar">
-        <input
-          className="search-input"
-          type="text"
-          placeholder="Enter medical keywords..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-        />
+        <div className="search-input-wrapper">
+          <input
+            className="search-input"
+            type="text"
+            placeholder="Enter medical keywords..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onFocus={() => setShowSuggestions(true)}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 150)} // setTimeout so clicks on suggestions can register
+            onKeyDown={(e) => e.key === "Enter" && handleSearch(query)}
+          />
+          { showSuggestions && (
+            <div className="search-suggestions">
+              {SUGGESTED_QUERIES.map((suggestion) => (
+                <div
+                  key={suggestion}
+                  className="suggestion-item"
+                  onMouseDown={() => {
+                    setQuery(suggestion);
+                    //setSearchedQuery(suggestion);
+                    handleSearch(suggestion);
+                  }}
+                >
+                  {suggestion}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
         <button className="search-button" onClick={handleSearch}>
           Search
         </button>
