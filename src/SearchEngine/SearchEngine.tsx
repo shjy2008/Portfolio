@@ -4,9 +4,16 @@ import { useState } from "react";
 import "./SearchEngine.css";
 import type { PubMedDoc } from "./SearchEngineType";
 
-const ip: string = "127.0.0.1";
-const port: string = "8080";
-const url: string = "http://" + ip + ":" + port;
+// local
+// const ip: string = "127.0.0.1";
+// const port: string = "8080";
+// const url: string = "http://" + ip + ":" + port;
+
+// AWS CloudFront -> EC2
+const domainName: string = "d668si04vnfs0.cloudfront.net"; 
+const resourcePath: string = "/api";
+const url: string = "https://" + domainName + resourcePath;
+
 
 const SUGGESTED_QUERIES: string[] = [
   "diabetes treatment",
@@ -87,7 +94,7 @@ const SearchEngine: React.FC<SearchEngineProps> = ({  }) => {
       <p className="search-origin">
         <b>Search data origin: </b>
         <a href="https://huggingface.co/datasets/MedRAG/pubmed" target="_blank" rel="noopener noreferrer">MedRAG PubMed Dataset</a>
-         - 23.9 million PubMed abstracts, index size: 50GB, stored in AWS EBS
+         - 23.9 million PubMed abstracts, index size: 50GB, stored in AWS EBS and S3
       </p>
 
       <div className="search-bar">
@@ -120,7 +127,7 @@ const SearchEngine: React.FC<SearchEngineProps> = ({  }) => {
             </div>
           )}
         </div>
-        <button className="search-button" onClick={handleSearch}>
+        <button className="search-button" onClick={() => handleSearch(query)}>
           Search
         </button>
       </div>
