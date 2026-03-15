@@ -71,7 +71,7 @@ const SearchEngine: React.FC<SearchEngineProps> = ({  }) => {
     if (words.length === 0) return text;
 
     // Create a regex to match any word, case-insensitive
-    const regex = new RegExp(`(${words.join("|")})`, "gi");
+    const regex = new RegExp(`\\b(${words.join("|")})\\b`, "gi");
 
     // Split text into parts based on the words
     const parts = text.split(regex);
