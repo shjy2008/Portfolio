@@ -5,7 +5,7 @@ import './BertSentiment.css'; // Reuse common project styling
 const FlowerVision: React.FC = () => {
   return (
     <div className="project-page-container">
-      <Link to="/" className="back-link">← Back to Home</Link>
+      <Link to="/#projects" className="back-link">← Back to Home</Link>
       <div className="project-header">
         <h1 className="project-title">Flower Vision & Generation</h1>
         <p className="project-subtitle">Computer Vision Pipeline (Backend Under Maintenance)</p>

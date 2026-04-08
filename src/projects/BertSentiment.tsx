@@ -49,7 +49,7 @@ const BertSentiment: React.FC = () => {
 
   return (
     <div className="project-page-container">
-      <Link to="/" className="back-link">← Back to Home</Link>
+      <Link to="/#projects" className="back-link">← Back to Home</Link>
       <div className="project-header">
         <h1 className="project-title">BERT Sentiment Classifier</h1>
         <p className="project-subtitle">Natural Language Processing API</p>

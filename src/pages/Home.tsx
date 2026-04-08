@@ -58,8 +58,8 @@ const Home: React.FC = () => {
               <a href="mailto:shjy2015@gmail.com">shjy2015@gmail.com</a> • <span>Auckland, NZ</span>
             </div>
             <p className="hero-intro">
-              10+ years Senior Software Engineer, including 7+ years at <b>NetEase Games</b> where I led a 10-engineer team to deliver the 
-              globally successful mobile game <b>Onmyoji</b> (250M+ downloads). Inventor of 3 technical patents. 
+              10+ years Senior Software Engineer, including 7+ years at <b>NetEase Games</b> where I led a 10-engineer team to deliver the
+              globally successful mobile game <b>Onmyoji</b> (250M+ downloads). Inventor of 3 technical patents.
               Master of Applied Science with Distinction from the University of Otago. Expert in C++ and Python, with a strong foundation in LLMs and RAG.
             </p>
             <div className="hero-badges">
@@ -87,7 +87,7 @@ const Home: React.FC = () => {
               <h3>Infrastructure & Cloud</h3>
               <p>AWS (EC2, S3, CloudFront), Docker, MongoDB, Redis, Linux</p>
             </div>
-             <div className="skill-group">
+            <div className="skill-group">
               <h3>Specialties</h3>
               <p>Game Engines (Unity, Cocos, NeoX), Graphics (OpenGL), High-Performance Systems</p>
             </div>
@@ -99,7 +99,7 @@ const Home: React.FC = () => {
       </section>
 
       {/* Projects Section */}
-      <main className="projects-section">
+      <main id="projects" className="projects-section">
         <h2 className="section-title">Featured Projects</h2>
         <div className="projects-grid">
           {projects.map((project) => (

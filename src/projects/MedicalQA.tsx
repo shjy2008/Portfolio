@@ -5,7 +5,7 @@ import './BertSentiment.css';
 const MedicalQA: React.FC = () => {
   return (
     <div className="project-page-container">
-      <Link to="/" className="back-link">← Back to Home</Link>
+      <Link to="/#projects" className="back-link">← Back to Home</Link>
       <div className="project-header">
         <h1 className="project-title">LLM+RAG Medical Q&A</h1>
         <p className="project-subtitle">Beyond SOTA: Phi-3-mini Augmented Medical Bot</p>
