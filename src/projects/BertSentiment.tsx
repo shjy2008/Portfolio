@@ -16,8 +16,8 @@ const BertSentiment: React.FC = () => {
     setError(null);
     setResult(null);
 
-    // const endpoint = `https://junyishen.com/api/bert/predict/${task}`;
-    const endpoint = `http://localhost:8000/api/bert/predict/${task}`;
+    const baseUrl = import.meta.env.DEV ? 'http://localhost:8000' : 'https://junyishen.com';
+    const endpoint = `${baseUrl}/api/bert/predict/${task}`;
 
     try {
       const response = await fetch(endpoint, {
