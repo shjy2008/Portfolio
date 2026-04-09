@@ -3,9 +3,13 @@ import { Link } from 'react-router-dom';
 import './BertSentiment.css';
 
 const BertSentiment: React.FC = () => {
+  type AnalyticsResult =
+    | { task: 'cfimdb'; isPositive: boolean; confidence: number }
+    | { task: 'sst5'; rating: number; confidence: number };
+
   const [text, setText] = useState('');
   const [task, setTask] = useState<'cfimdb' | 'sst5'>('cfimdb');
-  const [result, setResult] = useState<string | null>(null);
+  const [result, setResult] = useState<AnalyticsResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,10 +40,9 @@ const BertSentiment: React.FC = () => {
 
       // Parse the response based on the task
       if (task === 'cfimdb') {
-        const sentiment = data.pred === 1 ? 'Positive (1)' : 'Negative (0)';
-        setResult(`Result: ${sentiment}`);
+        setResult({ task: 'cfimdb', isPositive: data.pred === 1, confidence: data.confidence });
       } else {
-        setResult(`Rating: ${data.pred + 1} / 5 Stars`);
+        setResult({ task: 'sst5', rating: data.pred + 1, confidence: data.confidence });
       }
     } catch (err: any) {
       setError(err.message || 'An error occurred while analyzing the text.');
@@ -93,11 +96,50 @@ const BertSentiment: React.FC = () => {
             </label>
           </div>
 
+          <div className="suggested-sentences">
+            <span className="suggested-label">Try an example:</span>
+            <div className="chips">
+              <button
+                className="chip"
+                onClick={() => {
+                  setText("This movie was absolutely fantastic! I loved every minute of it.");
+                  setResult(null);
+                }}
+              >
+                "This movie was absolutely fantastic..."
+              </button>
+              <button
+                className="chip"
+                onClick={() => {
+                  setText("Terrible acting, the plot makes no sense. Complete waste of time.");
+                  setResult(null);
+                }}
+              >
+                "Terrible acting, the plot makes..."
+              </button>
+              <button
+                className="chip"
+                onClick={() => {
+                  setText("It was okay, not the best but watchable on a Sunday afternoon.");
+                  setResult(null);
+                }}
+              >
+                "It was okay, not the best..."
+              </button>
+            </div>
+          </div>
+
           <textarea
             className="text-input"
-            placeholder="Type a sentence or movie review here to analyze its sentiment..."
+            placeholder="Type a sentence here to analyze its sentiment..."
             value={text}
             onChange={(e) => setText(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                analyzeSentiment();
+              }
+            }}
             rows={5}
           />
 
@@ -112,8 +154,26 @@ const BertSentiment: React.FC = () => {
           {error && <div className="error-message">{error}</div>}
 
           {result && (
-            <div className={`result-box ${result.includes('Positive') || result.includes('4') || result.includes('5') ? 'positive' : 'negative'}`}>
-              <h3>{result}</h3>
+            <div className={`result-box ${(result.task === 'cfimdb' && result.isPositive) || (result.task === 'sst5' && result.rating >= 3) ? 'positive' : 'negative'}`}>
+              {result.task === 'cfimdb' ? (
+                <h3>{result.isPositive ? 'Positive' : 'Negative'}</h3>
+              ) : (
+                <div className="rating-result">
+                  <h3>
+                    Rating: <span className="highlight-rating">{result.rating}</span> / 5
+                  </h3>
+                  <div className="stars">
+                    {Array.from({ length: result.rating }).map((_, i) => (
+                      <span key={i} className="star-icon">⭐</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {result.confidence !== undefined && (
+                <div className="confidence-score">
+                  Confidence: {(result.confidence * 100).toFixed(1)}%
+                </div>
+              )}
             </div>
           )}
         </div>
