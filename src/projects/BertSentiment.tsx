@@ -11,12 +11,13 @@ const BertSentiment: React.FC = () => {
 
   const analyzeSentiment = async () => {
     if (!text.trim()) return;
-    
+
     setLoading(true);
     setError(null);
     setResult(null);
 
-    const endpoint = `https://junyishen.com/api/bert/predict/${task}`;
+    // const endpoint = `https://junyishen.com/api/bert/predict/${task}`;
+    const endpoint = `http://localhost:8000/api/bert/predict/${task}`;
 
     try {
       const response = await fetch(endpoint, {
@@ -32,13 +33,13 @@ const BertSentiment: React.FC = () => {
       }
 
       const data = await response.json();
-      
+
       // Parse the response based on the task
       if (task === 'cfimdb') {
-        const sentiment = data.prediction === 1 ? 'Positive (1)' : 'Negative (0)';
+        const sentiment = data.pred === 1 ? 'Positive (1)' : 'Negative (0)';
         setResult(`Result: ${sentiment}`);
       } else {
-        setResult(`Rating: ${data.prediction} / 5 Stars`);
+        setResult(`Rating: ${data.pred + 1} / 5 Stars`);
       }
     } catch (err: any) {
       setError(err.message || 'An error occurred while analyzing the text.');
@@ -59,7 +60,7 @@ const BertSentiment: React.FC = () => {
         <div className="info-panel">
           <h3>About this Project</h3>
           <p>
-            This interactive demo relies on a custom fine-tuned BERT model running on a live PyTorch backend. 
+            This interactive demo relies on a custom fine-tuned BERT model running on a live PyTorch backend.
             It supports two distinct NLP classification tasks:
           </p>
           <ul>
@@ -71,37 +72,37 @@ const BertSentiment: React.FC = () => {
         <div className="demo-panel">
           <div className="task-selector">
             <label>
-              <input 
-                type="radio" 
-                name="task" 
-                value="cfimdb" 
+              <input
+                type="radio"
+                name="task"
+                value="cfimdb"
                 checked={task === 'cfimdb'}
-                onChange={() => setTask('cfimdb')} 
+                onChange={() => setTask('cfimdb')}
               />
               IMDB (Positive/Negative)
             </label>
             <label>
-              <input 
-                type="radio" 
-                name="task" 
-                value="sst5" 
+              <input
+                type="radio"
+                name="task"
+                value="sst5"
                 checked={task === 'sst5'}
-                onChange={() => setTask('sst5')} 
+                onChange={() => setTask('sst5')}
               />
               SST-5 (1-5 Star Rating)
             </label>
           </div>
 
-          <textarea 
-            className="text-input" 
+          <textarea
+            className="text-input"
             placeholder="Type a sentence or movie review here to analyze its sentiment..."
             value={text}
             onChange={(e) => setText(e.target.value)}
             rows={5}
           />
 
-          <button 
-            className="primary-button" 
+          <button
+            className="primary-button"
             onClick={analyzeSentiment}
             disabled={loading || !text.trim()}
           >
@@ -109,7 +110,7 @@ const BertSentiment: React.FC = () => {
           </button>
 
           {error && <div className="error-message">{error}</div>}
-          
+
           {result && (
             <div className={`result-box ${result.includes('Positive') || result.includes('4') || result.includes('5') ? 'positive' : 'negative'}`}>
               <h3>{result}</h3>
