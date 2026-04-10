@@ -70,6 +70,23 @@ const Home: React.FC = () => {
         </div>
       </header>
 
+      {/* Projects Section */}
+      <main id="projects" className="projects-section">
+        <h2 className="section-title">Featured Projects</h2>
+        <div className="projects-grid">
+          {projects.map((project) => (
+            <Link key={project.id} to={project.path} className="project-card">
+              <span className="project-tag">{project.tag}</span>
+              <h3 className="project-name">{project.name}</h3>
+              <p className="project-desc">{project.description}</p>
+              <div className="project-link">
+                View Project <span>→</span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </main>
+
       {/* Skills Section */}
       <section className="skills-section">
         <h2 className="section-title">Technical Expertise</h2>
@@ -97,23 +114,6 @@ const Home: React.FC = () => {
           </div>
         </div>
       </section>
-
-      {/* Projects Section */}
-      <main id="projects" className="projects-section">
-        <h2 className="section-title">Featured Projects</h2>
-        <div className="projects-grid">
-          {projects.map((project) => (
-            <Link key={project.id} to={project.path} className="project-card">
-              <span className="project-tag">{project.tag}</span>
-              <h3 className="project-name">{project.name}</h3>
-              <p className="project-desc">{project.description}</p>
-              <div className="project-link">
-                View Project <span>→</span>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </main>
 
       {/* Career Narrative */}
       <section className="narrative-section">
