@@ -1,14 +1,126 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import './BertSentiment.css'; // Reuse common project styling
+import './BertSentiment.css'; // Reusing common panel styles
+import './FlowerVision.css';
+
+import img1 from '../assets/sample_flower_images/image_01209.jpg';
+import img2 from '../assets/sample_flower_images/image_02196.jpg';
+import img3 from '../assets/sample_flower_images/image_03585.jpg';
+import img4 from '../assets/sample_flower_images/image_03670.jpg';
+import img5 from '../assets/sample_flower_images/image_06683.jpg';
+import img6 from '../assets/sample_flower_images/image_06745.jpg';
+
+const sampleImages = [img1, img2, img3, img4, img5, img6];
+
+type PredictionResult = {
+  filename: string;
+  prediction_index: number;
+  prediction_class: string;
+  model_type: string;
+};
 
 const FlowerVision: React.FC = () => {
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [fileToUpload, setFileToUpload] = useState<File | null>(null);
+  const [result, setResult] = useState<PredictionResult | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      processFile(file);
+    }
+  };
+
+  const processFile = (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      setError('Please upload an image file.');
+      return;
+    }
+    setFileToUpload(file);
+    setSelectedImage(URL.createObjectURL(file));
+    setResult(null);
+    setError(null);
+  };
+
+  const onDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const onDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const onDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      processFile(file);
+    }
+  };
+
+  const handleSampleClick = async (imgUrl: string) => {
+    setSelectedImage(imgUrl);
+    setResult(null);
+    setError(null);
+    setLoading(true);
+
+    try {
+      const response = await fetch(imgUrl);
+      const blob = await response.blob();
+      const filename = imgUrl.split('/').pop() || 'sample.jpg';
+      const file = new File([blob], filename, { type: 'image/jpeg' });
+      setFileToUpload(file);
+    } catch (err: any) {
+      setError('Failed to load sample image.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const classifyImage = async () => {
+    if (!fileToUpload) return;
+
+    setLoading(true);
+    setError(null);
+    setResult(null);
+
+    const baseUrl = import.meta.env.DEV ? 'http://localhost:8000' : '';
+    const endpoint = `${baseUrl}/api/cv/classify`;
+
+    const formData = new FormData();
+    formData.append('file', fileToUpload);
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setResult(data);
+    } catch (err: any) {
+      setError(err.message || 'An error occurred while classifying the image.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="project-page-container">
       <Link to="/#projects" className="back-link">← Back to Home</Link>
       <div className="project-header">
-        <h1 className="project-title">Flower Vision & Generation</h1>
-        <p className="project-subtitle">Computer Vision Pipeline (Backend Under Maintenance)</p>
+        <h1 className="project-title">Flower Vision Classifier</h1>
+        <p className="project-subtitle">Computer Vision Pipeline</p>
       </div>
 
       <div className="project-content">
@@ -18,18 +130,82 @@ const FlowerVision: React.FC = () => {
             An end-to-end Computer Vision project combining image classification and generative AI.
           </p>
           <ul>
-            <li><b>CNN Classifier:</b> Trained on the Oxford Flower dataset using PyTorch, achieving 81% accuracy on the 10-class dataset and 72% on the 102-class dataset.</li>
-            <li><b>Latent Diffusion Model:</b> A generative AI implementation utilizing an autoencoder and U-Net denoising architecture to synthesize realistic flower images from noise.</li>
+            <li><b>CNN Classifier:</b> Trained on the Oxford Flower dataset using PyTorch. Predicts the specific flower variety given an image. Achieved 81% accuracy on the 10-class dataset and 72% on the 102-class dataset.</li>
+            <li><b>Latent Diffusion Model:</b> A generative AI implementation utilizing an autoencoder and U-Net denoising architecture to synthesize realistic flower images from noise (Demo Coming Soon).</li>
+            <li><b>Real-time Inference:</b> The backend performs classification instantly via a REST API.</li>
           </ul>
         </div>
 
-        <div className="demo-panel" style={{ textAlign: 'center', justifyContent: 'center' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🌸</div>
-          <h2>Interactive Demo Coming Soon</h2>
-          <p style={{ color: 'var(--text-muted)', lineHeight: 1.6 }}>
-            The Web UI for the Latent Diffusion generator is currently being wired to the PyTorch backend. 
-            Check back later to generate realistic flower images on the fly!
-          </p>
+        <div className="demo-panel">
+          <div className="upload-section">
+            <input
+              type="file"
+              accept="image/*"
+              style={{ display: 'none' }}
+              ref={fileInputRef}
+              onChange={handleFileChange}
+            />
+
+            <div
+              className={`drop-zone ${isDragging ? 'dragging' : ''}`}
+              onClick={() => fileInputRef.current?.click()}
+              onDragOver={onDragOver}
+              onDragLeave={onDragLeave}
+              onDrop={onDrop}
+            >
+              {selectedImage ? (
+                <img src={selectedImage} alt="Selected" className="preview-image" />
+              ) : (
+                <div className="drop-zone-placeholder">
+                  <span className="upload-icon">📸</span>
+                  <p>Click to upload an image</p>
+                  <p className="upload-subtext">JPG, PNG</p>
+                </div>
+              )}
+            </div>
+
+            <button
+              className="primary-button"
+              onClick={classifyImage}
+              disabled={loading || !fileToUpload}
+              style={{ width: '100%', marginTop: '1rem' }}
+            >
+              {loading ? 'Classifying...' : 'Classify Image'}
+            </button>
+          </div>
+
+          <div className="samples-section">
+            <p className="samples-label">Or choose a sample image:</p>
+            <div className="samples-grid">
+              {sampleImages.map((imgUrl, index) => (
+                <img
+                  key={index}
+                  src={imgUrl}
+                  alt={`Sample ${index + 1}`}
+                  className="sample-thumbnail"
+                  onClick={() => handleSampleClick(imgUrl)}
+                />
+              ))}
+            </div>
+          </div>
+
+          {error && <div className="error-message" style={{ marginTop: '1rem' }}>{error}</div>}
+
+          {result && (
+            <div className="result-box positive cv-result">
+              <h3 className="prediction-class">{result.prediction_class.replace(/_/g, ' ').toUpperCase()}</h3>
+              <div className="prediction-details">
+                <div className="detail-item">
+                  <span className="detail-label">Class Index</span>
+                  <span className="detail-value">{result.prediction_index}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="detail-label">Model Type</span>
+                  <span className="detail-value">{result.model_type}</span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
