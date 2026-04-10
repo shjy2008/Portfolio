@@ -27,21 +27,15 @@ const FlowerVision: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const resultRef = useRef<HTMLDivElement>(null);
-
-  // Auto-scroll to results
-  React.useEffect(() => {
-    if (result) {
-      setTimeout(() => {
-        resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 100);
-    }
-  }, [result]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       processFile(file);
+      // Reset input value to allow selecting the same file again
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
@@ -96,14 +90,13 @@ const FlowerVision: React.FC = () => {
     }
 
     setLoading(true);
-    setResult(null);
     setError(null);
 
     try {
       const resizedFile = await resizeImage(file, 96);
       setFileToUpload(resizedFile);
       setSelectedImage(URL.createObjectURL(resizedFile));
-      classifyImage(resizedFile); // Auto-classify
+      await classifyImage(resizedFile); // Auto-classify (awaited)
     } catch (err: any) {
       setError('Failed to process image.');
     } finally {
@@ -131,7 +124,6 @@ const FlowerVision: React.FC = () => {
 
   const handleSampleClick = async (imgUrl: string) => {
     setSelectedImage(imgUrl);
-    setResult(null);
     setError(null);
     setLoading(true);
 
@@ -146,7 +138,7 @@ const FlowerVision: React.FC = () => {
       // We keep the original sample image for preview as it looks better than a 96x96 blown up image
       // but the fileToUpload is now 96x96
       setSelectedImage(imgUrl);
-      classifyImage(resizedFile); // Auto-classify
+      await classifyImage(resizedFile); // Auto-classify (awaited)
     } catch (err: any) {
       setError('Failed to load sample image.');
     } finally {
@@ -160,7 +152,6 @@ const FlowerVision: React.FC = () => {
 
     setLoading(true);
     setError(null);
-    setResult(null);
 
     const baseUrl = import.meta.env.DEV ? 'http://localhost:8000' : '';
     const endpoint = `${baseUrl}/api/cv/classify`;
@@ -244,6 +235,37 @@ const FlowerVision: React.FC = () => {
             >
               {loading ? 'Classifying...' : 'Classify Image'}
             </button>
+
+            {error && <div className="error-message" style={{ marginTop: '1rem', width: '100%' }}>{error}</div>}
+
+            <div className="result-container" style={{ minHeight: result || loading ? '180px' : '0', transition: 'min-height 0.3s', width: '100%' }}>
+              {(result || loading) && (
+                <div
+                  className={`result-box cv-result ${loading ? 'loading-pulse' : 'positive'}`}
+                  style={{ position: 'relative', overflow: 'hidden' }}
+                >
+                  {result ? (
+                    <div style={{ transition: 'opacity 0.3s' }}>
+                      <h3 className="prediction-class">{result.prediction_class.replace(/_/g, ' ').toUpperCase()}</h3>
+                      <div className="prediction-details">
+                        <div className="detail-item">
+                          <span className="detail-label">Class Index</span>
+                          <span className="detail-value">{result.prediction_index}</span>
+                        </div>
+                        <div className="detail-item">
+                          <span className="detail-label">Model Type</span>
+                          <span className="detail-value">{result.model_type}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ) : loading ? (
+                    <div style={{ padding: '2rem', textAlign: 'center' }}>
+                      <h3 className="prediction-class" style={{ opacity: 0.7 }}>PROCESSING...</h3>
+                    </div>
+                  ) : null}
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="samples-section">
@@ -260,24 +282,6 @@ const FlowerVision: React.FC = () => {
               ))}
             </div>
           </div>
-
-          {error && <div className="error-message" style={{ marginTop: '1rem' }}>{error}</div>}
-
-          {result && (
-            <div className="result-box positive cv-result" ref={resultRef}>
-              <h3 className="prediction-class">{result.prediction_class.replace(/_/g, ' ').toUpperCase()}</h3>
-              <div className="prediction-details">
-                <div className="detail-item">
-                  <span className="detail-label">Class Index</span>
-                  <span className="detail-value">{result.prediction_index}</span>
-                </div>
-                <div className="detail-item">
-                  <span className="detail-label">Model Type</span>
-                  <span className="detail-value">{result.model_type}</span>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>
