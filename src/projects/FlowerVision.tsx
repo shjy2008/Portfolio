@@ -27,6 +27,16 @@ const FlowerVision: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const resultRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to results
+  React.useEffect(() => {
+    if (result) {
+      setTimeout(() => {
+        resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+    }
+  }, [result]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -35,15 +45,70 @@ const FlowerVision: React.FC = () => {
     }
   };
 
-  const processFile = (file: File) => {
+  const resizeImage = (file: File, size: number): Promise<File> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = size;
+          canvas.height = size;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            reject(new Error('Could not get canvas context'));
+            return;
+          }
+
+          // Center Crop Logic
+          const sourceWidth = img.width;
+          const sourceHeight = img.height;
+          const minSide = Math.min(sourceWidth, sourceHeight);
+          const sourceX = (sourceWidth - minSide) / 2;
+          const sourceY = (sourceHeight - minSide) / 2;
+
+          ctx.drawImage(
+            img,
+            sourceX, sourceY, minSide, minSide, // Source (center crop)
+            0, 0, size, size // Destination (resize)
+          );
+
+          canvas.toBlob((blob) => {
+            if (blob) {
+              resolve(new File([blob], file.name, { type: 'image/jpeg' }));
+            } else {
+              reject(new Error('Canvas toBlob failed'));
+            }
+          }, 'image/jpeg', 0.95);
+        };
+        img.onerror = () => reject(new Error('Failed to load image'));
+        img.src = e.target?.result as string;
+      };
+      reader.onerror = () => reject(new Error('Failed to read file'));
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const processFile = async (file: File) => {
     if (!file.type.startsWith('image/')) {
       setError('Please upload an image file.');
       return;
     }
-    setFileToUpload(file);
-    setSelectedImage(URL.createObjectURL(file));
+
+    setLoading(true);
     setResult(null);
     setError(null);
+
+    try {
+      const resizedFile = await resizeImage(file, 96);
+      setFileToUpload(resizedFile);
+      setSelectedImage(URL.createObjectURL(resizedFile));
+      classifyImage(resizedFile); // Auto-classify
+    } catch (err: any) {
+      setError('Failed to process image.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const onDragOver = (e: React.DragEvent) => {
@@ -75,7 +140,13 @@ const FlowerVision: React.FC = () => {
       const blob = await response.blob();
       const filename = imgUrl.split('/').pop() || 'sample.jpg';
       const file = new File([blob], filename, { type: 'image/jpeg' });
-      setFileToUpload(file);
+
+      const resizedFile = await resizeImage(file, 96);
+      setFileToUpload(resizedFile);
+      // We keep the original sample image for preview as it looks better than a 96x96 blown up image
+      // but the fileToUpload is now 96x96
+      setSelectedImage(imgUrl);
+      classifyImage(resizedFile); // Auto-classify
     } catch (err: any) {
       setError('Failed to load sample image.');
     } finally {
@@ -83,8 +154,9 @@ const FlowerVision: React.FC = () => {
     }
   };
 
-  const classifyImage = async () => {
-    if (!fileToUpload) return;
+  const classifyImage = async (file?: File) => {
+    const targetFile = file || fileToUpload;
+    if (!targetFile) return;
 
     setLoading(true);
     setError(null);
@@ -94,7 +166,7 @@ const FlowerVision: React.FC = () => {
     const endpoint = `${baseUrl}/api/cv/classify`;
 
     const formData = new FormData();
-    formData.append('file', fileToUpload);
+    formData.append('file', targetFile);
 
     try {
       const response = await fetch(endpoint, {
@@ -166,7 +238,7 @@ const FlowerVision: React.FC = () => {
 
             <button
               className="primary-button"
-              onClick={classifyImage}
+              onClick={() => classifyImage()}
               disabled={loading || !fileToUpload}
               style={{ width: '100%', marginTop: '1rem' }}
             >
@@ -192,7 +264,7 @@ const FlowerVision: React.FC = () => {
           {error && <div className="error-message" style={{ marginTop: '1rem' }}>{error}</div>}
 
           {result && (
-            <div className="result-box positive cv-result">
+            <div className="result-box positive cv-result" ref={resultRef}>
               <h3 className="prediction-class">{result.prediction_class.replace(/_/g, ' ').toUpperCase()}</h3>
               <div className="prediction-details">
                 <div className="detail-item">
