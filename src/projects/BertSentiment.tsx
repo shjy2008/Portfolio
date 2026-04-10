@@ -20,7 +20,7 @@ const BertSentiment: React.FC = () => {
     setError(null);
     setResult(null);
 
-    const baseUrl = import.meta.env.DEV ? 'http://localhost:8000' : 'https://junyishen.com';
+    const baseUrl = import.meta.env.DEV ? 'http://localhost:8000' : '';
     const endpoint = `${baseUrl}/api/bert/predict/${task}`;
 
     try {

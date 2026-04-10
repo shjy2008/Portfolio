@@ -11,10 +11,13 @@ import type { PubMedDoc } from "./SearchEngineType";
 // const url: string = "http://" + ip + ":" + port;
 
 // AWS CloudFront -> EC2
-const domainName: string = "d668si04vnfs0.cloudfront.net"; 
-const resourcePath: string = "/api";
-const url: string = "https://" + domainName + resourcePath;
+// const domainName: string = "d668si04vnfs0.cloudfront.net"; 
+// const resourcePath: string = "/api";
+// const url: string = "https://" + domainName + resourcePath;
 
+// Use local for dev, relative path for production
+const baseUrl = import.meta.env.DEV ? 'http://localhost:8080' : '';
+const url = `${baseUrl}/api`;
 
 const SUGGESTED_QUERIES: string[] = [
   "diabetes treatment",
@@ -28,7 +31,7 @@ interface SearchEngineProps {
   // backendUrl: string;
 }
 
-const SearchEngine: React.FC<SearchEngineProps> = ({  }) => {
+const SearchEngine: React.FC<SearchEngineProps> = ({ }) => {
   const [query, setQuery] = useState<string>("");
   const [results, setResults] = useState<PubMedDoc[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -56,7 +59,7 @@ const SearchEngine: React.FC<SearchEngineProps> = ({  }) => {
 
       const data: PubMedDoc[] = await res.json();
       setResults(data);
-      
+
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
@@ -96,7 +99,7 @@ const SearchEngine: React.FC<SearchEngineProps> = ({  }) => {
       <p className="search-origin">
         <b>Search data origin: </b>
         <a href="https://huggingface.co/datasets/MedRAG/pubmed" target="_blank" rel="noopener noreferrer">MedRAG PubMed Dataset</a>
-         - 23.9 million PubMed abstracts, index size: 50GB, stored in AWS EBS and S3
+        - 23.9 million PubMed abstracts, index size: 50GB, stored in AWS EBS and S3
       </p>
 
       <div className="search-bar">
@@ -111,7 +114,7 @@ const SearchEngine: React.FC<SearchEngineProps> = ({  }) => {
             onBlur={() => setTimeout(() => setShowSuggestions(false), 150)} // setTimeout so clicks on suggestions can register
             onKeyDown={(e) => e.key === "Enter" && handleSearch(query)}
           />
-          { showSuggestions && (
+          {showSuggestions && (
             <div className="search-suggestions">
               {SUGGESTED_QUERIES.map((suggestion) => (
                 <div

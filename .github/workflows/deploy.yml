@@ -14,6 +14,7 @@ env:
   NODE_VERSION: '24'
   S3_BUCKET: ${{ secrets.S3_BUCKET_NAME }}
   CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+  AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }} # Recommended to use a secret
 
 jobs:
   deploy:
@@ -37,7 +38,7 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN}}
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Deploy to S3
