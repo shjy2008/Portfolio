@@ -77,6 +77,7 @@ const BertSentiment: React.FC = () => {
           <ul>
             <li><b>IMDB Binary Classification:</b> Trained on the CFIMDB dataset to predict whether a movie review is Positive or Negative. Achieved 98.4% accuracy.</li>
             <li><b>SST-5 Fine-Grained Classification:</b> Trained on the Stanford Sentiment Treebank to predict a sentiment rating on a 1 to 5 scale. Achieved 59.4% accuracy.</li>
+            <li><b>Real-time Inference:</b> The backend performs classification instantly via a REST API, containerized using Docker and deployed on AWS ECS with Fargate.</li>
           </ul>
         </div>
 

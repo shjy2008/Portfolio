@@ -8,21 +8,21 @@ const Home: React.FC = () => {
   const projects = [
     {
       id: 'pubmed-search',
-      name: 'PubMed BM25 Search Engine',
+      name: 'BM25 Search Engine',
       description: 'C++ BM25 search engine over 23M PubMed abstracts. Deployed on AWS EC2 with inverted index files (50GB) and React front-end.',
       tag: 'C++ • AWS • React',
       path: '/search-engine'
     },
     {
       id: 'bert-sentiment',
-      name: 'BERT Sentiment Classifier',
+      name: 'BERT Sentiment Analysis',
       description: 'Fine-tuned BERT NLP model achieving 98.4% accuracy on IMDB. Interactive multi-task sentiment prediction for binary and 5-star ratings.',
       tag: 'NLP • PyTorch • BERT',
       path: '/sentiment-analysis'
     },
     {
       id: 'flower-cv',
-      name: 'Flower Vision & Generation',
+      name: 'Flower Classifier & Generator',
       description: 'CNN image classifier and Latent Diffusion generator using autoencoder and U-Net denoising architecture.',
       tag: 'CV • PyTorch • Diffusion',
       path: '/flower-vision'

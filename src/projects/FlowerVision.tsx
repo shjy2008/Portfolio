@@ -33,6 +33,11 @@ const FlowerVision: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [activeTab, setActiveTab] = useState<'classifier' | 'generator'>('classifier');
+  const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generationError, setGenerationError] = useState<string | null>(null);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
 
@@ -192,11 +197,45 @@ const FlowerVision: React.FC = () => {
     }
   };
 
+  const generateImage = async (format: 'gif' | 'jpeg', batchSize: number = 1) => {
+    setIsGenerating(true);
+    setGenerationError(null);
+    setGeneratedImageUrl(null); // Clear previous image
+
+    const baseUrl = import.meta.env.DEV ? 'http://localhost:8000' : '';
+    const endpoint = `${baseUrl}/api/cv/generate?format=${format}&batch_size=${batchSize}`;
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'GET',
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
+
+      const blob = await response.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      setGeneratedImageUrl(objectUrl);
+    } catch (err: any) {
+      setGenerationError(err.message || 'An error occurred while generating the image.');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleTabChange = (tab: 'classifier' | 'generator') => {
+    setActiveTab(tab);
+    if (tab === 'generator' && !generatedImageUrl && !isGenerating) {
+      generateImage('gif', 16);
+    }
+  };
+
   return (
     <div className="project-page-container">
       <Link to="/#projects" className="back-link">← Back to Home</Link>
       <div className="project-header">
-        <h1 className="project-title">Flower Vision Classifier</h1>
+        <h1 className="project-title">Flower Classifier & Generator</h1>
         <p className="project-subtitle">Computer Vision Pipeline</p>
       </div>
 
@@ -207,93 +246,147 @@ const FlowerVision: React.FC = () => {
             An end-to-end Computer Vision project combining image classification and generative AI.
           </p>
           <ul>
-            <li><b>CNN Classifier:</b> Trained on the Oxford Flower dataset using PyTorch. Predicts the specific flower variety given an image. Achieved 81% accuracy on the 10-class dataset and 72% on the 102-class dataset.</li>
-            <li><b>Latent Diffusion Model:</b> A generative AI implementation utilizing an autoencoder and U-Net denoising architecture to synthesize realistic flower images from noise (Demo Coming Soon).</li>
-            <li><b>Real-time Inference:</b> The backend performs classification instantly via a REST API.</li>
+            <li><b>Image Classifier:</b> Based on CNN, trained on the Oxford Flower dataset using PyTorch. Predicts the specific flower variety given an image. Achieved 81% accuracy on the 10-class dataset and 72% on the 102-class dataset.</li>
+            <li><b>Image Generator:</b> A latent diffusion model using an autoencoder and U-Net denoising architecture to generate flower images from noise.</li>
+            <li><b>Real-time Inference:</b> The backend performs classification instantly via a REST API, containerized using Docker and deployed on AWS ECS with Fargate.</li>
           </ul>
         </div>
 
         <div className="demo-panel">
-          <div className="samples-section">
-            <span className="suggested-label" style={{ display: 'block', marginBottom: '1rem' }}>Try an example:</span>
-            <div className="samples-grid">
-              {sampleImages.map((imgUrl, index) => (
-                <img
-                  key={index}
-                  src={imgUrl}
-                  alt={`Sample ${index + 1}`}
-                  className="sample-thumbnail"
-                  onClick={() => handleSampleClick(imgUrl)}
-                />
-              ))}
-            </div>
-          </div>
-
-          <div className="upload-section">
-            <span className="suggested-label" style={{ alignSelf: 'flex-start', marginBottom: '1rem' }}>Or upload your own image:</span>
-            <input
-              type="file"
-              accept="image/*"
-              style={{ display: 'none' }}
-              ref={fileInputRef}
-              onChange={handleFileChange}
-            />
-
-            <div
-              className={`drop-zone ${isDragging ? 'dragging' : ''}`}
-              onClick={() => fileInputRef.current?.click()}
-              onDragOver={onDragOver}
-              onDragLeave={onDragLeave}
-              onDrop={onDrop}
-            >
-              {selectedImage ? (
-                <img src={selectedImage} alt="Selected" className="preview-image" />
-              ) : (
-                <div className="drop-zone-placeholder">
-                  <span className="upload-icon">📸</span>
-                  <p>Click to upload an image</p>
-                  <p className="upload-subtext">JPG, PNG</p>
-                </div>
-              )}
-            </div>
-
+          <div className="demo-tabs">
             <button
-              className="primary-button"
-              onClick={() => classifyImage()}
-              disabled={loading || !fileToUpload}
-              style={{ width: '100%', marginTop: '1rem' }}
+              className={`demo-tab ${activeTab === 'classifier' ? 'active' : ''}`}
+              onClick={() => handleTabChange('classifier')}
             >
-              {loading ? 'Classifying...' : 'Classify Image'}
+              Classification
             </button>
-
-            {error && <div className="error-message" style={{ marginTop: '1rem', width: '100%' }}>{error}</div>}
-
-            <div className="result-container" style={{ minHeight: result || loading ? '180px' : '0', transition: 'min-height 0.3s', width: '100%' }}>
-              {(result || loading) && (
-                <div
-                  ref={resultRef}
-                  className={`result-box cv-result ${loading ? 'loading-pulse' : 'positive'}`}
-                  style={{ position: 'relative', overflow: 'hidden' }}
-                >
-                  {result ? (
-                    <div style={{ transition: 'opacity 0.3s' }}>
-                      <h3 className="prediction-class">{result.prediction_class.replace(/_/g, ' ').toUpperCase()}</h3>
-                      <div className="prediction-details">
-                        <div className="detail-item">
-                          <span className="detail-label">Confidence</span>
-                          <span className="detail-value">{(result.confidence * 100).toFixed(2)}%</span>
-                        </div>
-                      </div>
-                    </div>
-                  ) : loading ? (
-                    <div style={{ padding: '2rem', textAlign: 'center' }}>
-                      <h3 className="prediction-class" style={{ opacity: 0.7 }}>PROCESSING...</h3>
-                    </div>
-                  ) : null}
-                </div>
-              )}
-            </div>
+            <button
+              className={`demo-tab ${activeTab === 'generator' ? 'active' : ''}`}
+              onClick={() => handleTabChange('generator')}
+            >
+              Generative AI
+            </button>
           </div>
+
+          {activeTab === 'classifier' && (
+            <>
+              <div className="samples-section">
+                <span className="suggested-label" style={{ display: 'block', marginBottom: '1rem' }}>Try an example:</span>
+                <div className="samples-grid">
+                  {sampleImages.map((imgUrl, index) => (
+                    <img
+                      key={index}
+                      src={imgUrl}
+                      alt={`Sample ${index + 1}`}
+                      className="sample-thumbnail"
+                      onClick={() => handleSampleClick(imgUrl)}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div className="upload-section">
+                <span className="suggested-label" style={{ alignSelf: 'flex-start', marginBottom: '1rem' }}>Or upload your own image:</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                />
+
+                <div
+                  className={`drop-zone ${isDragging ? 'dragging' : ''}`}
+                  onClick={() => fileInputRef.current?.click()}
+                  onDragOver={onDragOver}
+                  onDragLeave={onDragLeave}
+                  onDrop={onDrop}
+                >
+                  {selectedImage ? (
+                    <img src={selectedImage} alt="Selected" className="preview-image" />
+                  ) : (
+                    <div className="drop-zone-placeholder">
+                      <span className="upload-icon">📸</span>
+                      <p>Click to upload an image</p>
+                      <p className="upload-subtext">JPG, PNG</p>
+                    </div>
+                  )}
+                </div>
+
+                <button
+                  className="primary-button"
+                  onClick={() => classifyImage()}
+                  disabled={loading || !fileToUpload}
+                  style={{ width: '100%', marginTop: '1rem' }}
+                >
+                  {loading ? 'Classifying...' : 'Classify Image'}
+                </button>
+
+                {error && <div className="error-message" style={{ marginTop: '1rem', width: '100%' }}>{error}</div>}
+
+                <div className="result-container" style={{ minHeight: result || loading ? '180px' : '0', transition: 'min-height 0.3s', width: '100%' }}>
+                  {(result || loading) && (
+                    <div
+                      ref={resultRef}
+                      className={`result-box cv-result ${loading ? 'loading-pulse' : 'positive'}`}
+                      style={{ position: 'relative', overflow: 'hidden' }}
+                    >
+                      {result ? (
+                        <div style={{ transition: 'opacity 0.3s' }}>
+                          <h3 className="prediction-class">{result.prediction_class.replace(/_/g, ' ').toUpperCase()}</h3>
+                          <div className="prediction-details">
+                            <div className="detail-item">
+                              <span className="detail-label">Confidence</span>
+                              <span className="detail-value">{(result.confidence * 100).toFixed(2)}%</span>
+                            </div>
+                          </div>
+                        </div>
+                      ) : loading ? (
+                        <div style={{ padding: '2rem', textAlign: 'center' }}>
+                          <h3 className="prediction-class" style={{ opacity: 0.7 }}>PROCESSING...</h3>
+                        </div>
+                      ) : null}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
+
+          {activeTab === 'generator' && (
+            <div className="generator-section">
+              <h3 className="generator-title">Latent Diffusion Denoising</h3>
+              <p className="generator-description">
+                Watch our custom U-Net denoise random Gaussian noise into a flower over multiple diffusion steps.
+              </p>
+
+              <div className="generation-display">
+                {generatedImageUrl ? (
+                  <img src={generatedImageUrl} alt="Generated Flower" className="generated-image" />
+                ) : isGenerating ? (
+                  <div className="loading-pulse generator-placeholder">
+                    Generating 16 Flowers...
+                  </div>
+                ) : (
+                  <div className="generator-placeholder">
+                    <span className="upload-icon" style={{ filter: 'hue-rotate(90deg)' }}>🌸</span>
+                    <p style={{ marginTop: '1rem' }}>{generationError ? 'Generation Failed' : 'Ready'}</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="generator-actions">
+                <button
+                  className="primary-button"
+                  onClick={() => generateImage('gif', 16)}
+                  disabled={isGenerating}
+                >
+                  {isGenerating ? 'Generating...' : 'Regenerate 16 Flowers (GIF)'}
+                </button>
+              </div>
+              {generationError && <div className="error-message" style={{ marginTop: '1rem', width: '100%', textAlign: 'center' }}>{generationError}</div>}
+            </div>
+          )}
         </div>
       </div>
     </div>
