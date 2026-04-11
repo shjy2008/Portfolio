@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './BertSentiment.css';
 
@@ -12,9 +12,17 @@ const BertSentiment: React.FC = () => {
   const [result, setResult] = useState<AnalyticsResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const resultRef = useRef<HTMLDivElement>(null);
 
-  const analyzeSentiment = async () => {
-    if (!text.trim()) return;
+  useEffect(() => {
+    if (result && resultRef.current) {
+      resultRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [result]);
+
+  const analyzeSentiment = async (overrideText?: string) => {
+    const textToProcess = typeof overrideText === 'string' ? overrideText : text;
+    if (!textToProcess.trim()) return;
 
     setLoading(true);
     setError(null);
@@ -29,7 +37,7 @@ const BertSentiment: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ sentence: text }),
+        body: JSON.stringify({ sentence: textToProcess }),
       });
 
       if (!response.ok) {
@@ -102,8 +110,9 @@ const BertSentiment: React.FC = () => {
               <button
                 className="chip"
                 onClick={() => {
-                  setText("This movie was absolutely fantastic! I loved every minute of it.");
-                  setResult(null);
+                  const example = "This movie was absolutely fantastic! I loved every minute of it.";
+                  setText(example);
+                  analyzeSentiment(example);
                 }}
               >
                 "This movie was absolutely fantastic..."
@@ -111,8 +120,9 @@ const BertSentiment: React.FC = () => {
               <button
                 className="chip"
                 onClick={() => {
-                  setText("Terrible acting, the plot makes no sense. Complete waste of time.");
-                  setResult(null);
+                  const example = "Terrible acting, the plot makes no sense. Complete waste of time.";
+                  setText(example);
+                  analyzeSentiment(example);
                 }}
               >
                 "Terrible acting, the plot makes..."
@@ -120,8 +130,9 @@ const BertSentiment: React.FC = () => {
               <button
                 className="chip"
                 onClick={() => {
-                  setText("It was okay, not the best but watchable on a Sunday afternoon.");
-                  setResult(null);
+                  const example = "It was okay, not the best but watchable on a Sunday afternoon.";
+                  setText(example);
+                  analyzeSentiment(example);
                 }}
               >
                 "It was okay, not the best..."
@@ -145,7 +156,7 @@ const BertSentiment: React.FC = () => {
 
           <button
             className="primary-button"
-            onClick={analyzeSentiment}
+            onClick={() => analyzeSentiment()}
             disabled={loading || !text.trim()}
           >
             {loading ? 'Analyzing...' : 'Analyze Sentiment'}
@@ -154,7 +165,7 @@ const BertSentiment: React.FC = () => {
           {error && <div className="error-message">{error}</div>}
 
           {result && (
-            <div className={`result-box ${(result.task === 'cfimdb' && result.isPositive) || (result.task === 'sst5' && result.rating >= 3) ? 'positive' : 'negative'}`}>
+            <div ref={resultRef} className={`result-box ${(result.task === 'cfimdb' && result.isPositive) || (result.task === 'sst5' && result.rating >= 3) ? 'positive' : 'negative'}`}>
               {result.task === 'cfimdb' ? (
                 <h3>{result.isPositive ? 'Positive' : 'Negative'}</h3>
               ) : (

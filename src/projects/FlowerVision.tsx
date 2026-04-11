@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './BertSentiment.css'; // Reusing common panel styles
 import './FlowerVision.css';
@@ -9,8 +9,14 @@ import img3 from '../assets/sample_flower_images/image_03585.jpg';
 import img4 from '../assets/sample_flower_images/image_03670.jpg';
 import img5 from '../assets/sample_flower_images/image_06683.jpg';
 import img6 from '../assets/sample_flower_images/image_06745.jpg';
+import img7 from '../assets/sample_flower_images/image_07214.jpg';
+import img8 from '../assets/sample_flower_images/image_07329.jpg';
+import img9 from '../assets/sample_flower_images/image_07651.jpg';
+import img10 from '../assets/sample_flower_images/image_07839.jpg';
+import img11 from '../assets/sample_flower_images/image_07897.jpg';
+import img12 from '../assets/sample_flower_images/image_08183.jpg';
 
-const sampleImages = [img1, img2, img3, img4, img5, img6];
+const sampleImages = [img1, img2, img3, img4, img5, img6, img7, img8, img9, img10, img11, img12];
 
 type PredictionResult = {
   filename: string;
@@ -27,6 +33,13 @@ const FlowerVision: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const resultRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (result && resultRef.current) {
+      resultRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [result]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -95,7 +108,7 @@ const FlowerVision: React.FC = () => {
     try {
       const resizedFile = await resizeImage(file, 96);
       setFileToUpload(resizedFile);
-      setSelectedImage(URL.createObjectURL(resizedFile));
+      setSelectedImage(URL.createObjectURL(file));
       await classifyImage(resizedFile); // Auto-classify (awaited)
     } catch (err: any) {
       setError('Failed to process image.');
@@ -200,7 +213,23 @@ const FlowerVision: React.FC = () => {
         </div>
 
         <div className="demo-panel">
+          <div className="samples-section">
+            <span className="suggested-label" style={{ display: 'block', marginBottom: '1rem' }}>Try an example:</span>
+            <div className="samples-grid">
+              {sampleImages.map((imgUrl, index) => (
+                <img
+                  key={index}
+                  src={imgUrl}
+                  alt={`Sample ${index + 1}`}
+                  className="sample-thumbnail"
+                  onClick={() => handleSampleClick(imgUrl)}
+                />
+              ))}
+            </div>
+          </div>
+
           <div className="upload-section">
+            <span className="suggested-label" style={{ alignSelf: 'flex-start', marginBottom: '1rem' }}>Or upload your own image:</span>
             <input
               type="file"
               accept="image/*"
@@ -241,6 +270,7 @@ const FlowerVision: React.FC = () => {
             <div className="result-container" style={{ minHeight: result || loading ? '180px' : '0', transition: 'min-height 0.3s', width: '100%' }}>
               {(result || loading) && (
                 <div
+                  ref={resultRef}
                   className={`result-box cv-result ${loading ? 'loading-pulse' : 'positive'}`}
                   style={{ position: 'relative', overflow: 'hidden' }}
                 >
@@ -265,21 +295,6 @@ const FlowerVision: React.FC = () => {
                   ) : null}
                 </div>
               )}
-            </div>
-          </div>
-
-          <div className="samples-section">
-            <p className="samples-label">Or choose a sample image:</p>
-            <div className="samples-grid">
-              {sampleImages.map((imgUrl, index) => (
-                <img
-                  key={index}
-                  src={imgUrl}
-                  alt={`Sample ${index + 1}`}
-                  className="sample-thumbnail"
-                  onClick={() => handleSampleClick(imgUrl)}
-                />
-              ))}
             </div>
           </div>
         </div>
