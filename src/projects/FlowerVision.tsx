@@ -23,6 +23,7 @@ type PredictionResult = {
   prediction_index: number;
   prediction_class: string;
   model_type: string;
+  confidence: number;
 };
 
 const FlowerVision: React.FC = () => {
@@ -279,12 +280,8 @@ const FlowerVision: React.FC = () => {
                       <h3 className="prediction-class">{result.prediction_class.replace(/_/g, ' ').toUpperCase()}</h3>
                       <div className="prediction-details">
                         <div className="detail-item">
-                          <span className="detail-label">Class Index</span>
-                          <span className="detail-value">{result.prediction_index}</span>
-                        </div>
-                        <div className="detail-item">
-                          <span className="detail-label">Model Type</span>
-                          <span className="detail-value">{result.model_type}</span>
+                          <span className="detail-label">Confidence</span>
+                          <span className="detail-value">{(result.confidence * 100).toFixed(2)}%</span>
                         </div>
                       </div>
                     </div>
