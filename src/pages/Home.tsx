@@ -1,31 +1,19 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import './Home.css';
 import photograph from '../assets/Photograph.jpg';
 import skillsImg from '../assets/Skills.png';
+import BertSentiment from '../projects/BertSentiment';
+import FlowerVision from '../projects/FlowerVision';
+import { Link } from 'react-router-dom';
 
 const Home: React.FC = () => {
-  const projects = [
+  const otherProjects = [
     {
       id: 'pubmed-search',
       name: 'BM25 Search Engine',
       description: 'C++ BM25 search engine over 23M PubMed abstracts. Deployed on AWS EC2 with inverted index files (50GB) and React front-end.',
       tag: 'C++ • AWS • React',
       path: '/search-engine'
-    },
-    {
-      id: 'bert-sentiment',
-      name: 'BERT Sentiment Analysis',
-      description: 'Fine-tuned BERT NLP model achieving 98.4% accuracy on IMDB. Interactive multi-task sentiment prediction for binary and 5-star ratings.',
-      tag: 'NLP • PyTorch • BERT',
-      path: '/sentiment-analysis'
-    },
-    {
-      id: 'flower-cv',
-      name: 'Flower Classifier & Generator',
-      description: 'CNN image classifier and Latent Diffusion generator using autoencoder and U-Net denoising architecture.',
-      tag: 'CV • PyTorch • Diffusion',
-      path: '/flower-vision'
     },
     {
       id: 'med-qa',
@@ -45,36 +33,35 @@ const Home: React.FC = () => {
 
   return (
     <div className="home-container">
-      {/* Hero Section */}
-      <header className="hero-section">
-        <div className="hero-flex">
-          <div className="hero-avatar">
-            <img src={photograph} alt="Junyi Shen" />
+      {/* Main Interactive Projects - Vertical Stack */}
+      <section id="interactive-projects" className="interactive-section">
+        <h2 className="section-title">Deep Learning Showcases</h2>
+        <div className="vertical-interactive-stack">
+          <div className="interactive-panel-card">
+            <div className="panel-header">
+              <span className="project-tag">CV • PyTorch • Diffusion</span>
+              <h3>Flower Classifier & Generator</h3>
+              <p>End-to-end Computer Vision pipeline featuring a CNN classifier and a Latent Diffusion U-Net generator.</p>
+            </div>
+            <FlowerVision isEmbedded={true} />
           </div>
-          <div className="hero-text-content">
-            <h1 className="hero-title">Junyi Shen</h1>
-            <p className="hero-subtitle">Senior Software Engineer & AI Researcher</p>
-            <div className="hero-contact">
-              <a href="mailto:shjy2015@gmail.com">shjy2015@gmail.com</a> • <span>Auckland, NZ</span>
+
+          <div className="interactive-panel-card">
+            <div className="panel-header">
+              <span className="project-tag">NLP • PyTorch • BERT</span>
+              <h3>BERT Sentiment Analysis</h3>
+              <p>Fine-tuned BERT model for IMDB (Binary) and SST-5 (Fine-grained) sentiment classification task.</p>
             </div>
-            <p className="hero-intro">
-              10+ years Senior Software Engineer, including 7+ years at <b>NetEase Games</b> where I led a 10-engineer team to deliver the
-              globally successful mobile game <b>Onmyoji</b> (250M+ downloads). Inventor of 3 technical patents.
-              Master of Applied Science with Distinction from the University of Otago. Expert in C++ and Python, with a strong foundation in LLMs and RAG.
-            </p>
-            <div className="hero-badges">
-              <a href="https://github.com/shjy2008" target="_blank" rel="noreferrer" className="badge">GitHub</a>
-              <a href="https://linkedin.com/in/junyi-shen-4122a62b8" target="_blank" rel="noreferrer" className="badge">LinkedIn</a>
-            </div>
+            <BertSentiment isEmbedded={true} />
           </div>
         </div>
-      </header>
+      </section>
 
-      {/* Projects Section */}
+      {/* Other Featured Projects */}
       <main id="projects" className="projects-section">
-        <h2 className="section-title">Featured Projects</h2>
+        <h2 className="section-title">System & Game Projects</h2>
         <div className="projects-grid">
-          {projects.map((project) => (
+          {otherProjects.map((project) => (
             <Link key={project.id} to={project.path} className="project-card">
               <span className="project-tag">{project.tag}</span>
               <h3 className="project-name">{project.name}</h3>
@@ -87,30 +74,29 @@ const Home: React.FC = () => {
         </div>
       </main>
 
-      {/* Skills Section */}
-      <section className="skills-section">
-        <h2 className="section-title">Technical Expertise</h2>
-        <div className="skills-content">
-          <div className="skills-text">
-            <div className="skill-group">
-              <h3>Programming Languages</h3>
-              <p>C++, Python, TypeScript, C#, Java, GLSL, SQL</p>
+      {/* Merged Hero & Skills Section*/}
+      <section className="my-skills-panel">
+        <div className="skills-hero-content">
+          <div className="hero-avatar">
+            <img src={photograph} alt="Junyi Shen" />
+          </div>
+          <div className="hero-text-content">
+            <h1 className="hero-title">Junyi Shen</h1>
+            <p className="hero-subtitle">Senior Software Engineer & AI Researcher</p>
+            <div className="hero-contact">
+              <a href="mailto:shjy2015@gmail.com">shjy2015@gmail.com</a> • <span>Auckland, NZ</span>
             </div>
-            <div className="skill-group">
-              <h3>AI & Data Science</h3>
-              <p>LLMs, RAG, PyTorch, HuggingFace, BERT, NLP, CV, Information Retrieval</p>
-            </div>
-            <div className="skill-group">
-              <h3>Infrastructure & Cloud</h3>
-              <p>AWS (EC2, S3, CloudFront), Docker, MongoDB, Redis, Linux</p>
-            </div>
-            <div className="skill-group">
-              <h3>Specialties</h3>
-              <p>Game Engines (Unity, Cocos, NeoX), Graphics (OpenGL), High-Performance Systems</p>
+            <p className="hero-intro">
+              10+ years Senior Software Engineer, including 7+ years at <b>NetEase Games</b> where I led a 10-engineer team to deliver the
+              globally successful mobile game <b>Onmyoji</b> (250M+ downloads). Master of Applied Science with Distinction (GPA 8.6/9.0) from the University of Otago.
+            </p>
+            <div className="hero-badges">
+              <a href="https://github.com/shjy2008" target="_blank" rel="noreferrer" className="badge">GitHub</a>
+              <a href="https://linkedin.com/in/junyi-shen-4122a62b8" target="_blank" rel="noreferrer" className="badge">LinkedIn</a>
             </div>
           </div>
-          <div className="skills-visual">
-            <img src={skillsImg} alt="Technical Skills Chart" />
+          <div className="skills-visual-side">
+            <img src={skillsImg} alt="Technical Skills Chart" className="skills-small-img" />
           </div>
         </div>
       </section>
@@ -142,6 +128,7 @@ const Home: React.FC = () => {
           </div>
         </div>
       </section>
+
     </div>
   );
 };

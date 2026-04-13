@@ -79,10 +79,10 @@
   background: var(--glass);
   border: 1px solid var(--glass-border);
   border-radius: 20px;
-  padding: 2rem;
+  padding: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .task-selector {
@@ -301,4 +301,20 @@
   font-family: 'Inter', sans-serif;
   opacity: 0.8;
   font-weight: 500;
+}
+/* Embedded Styles */
+.embedded-project-container {
+  width: 100%;
+}
+
+.embedded-project-container .project-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .embedded-project-container .project-content {
+    grid-template-columns: 1fr 1.5fr;
+  }
 }

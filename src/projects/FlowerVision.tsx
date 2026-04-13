@@ -26,7 +26,11 @@ type PredictionResult = {
   confidence: number;
 };
 
-const FlowerVision: React.FC = () => {
+interface FlowerVisionProps {
+  isEmbedded?: boolean;
+}
+
+const FlowerVision: React.FC<FlowerVisionProps> = ({ isEmbedded = false }) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [fileToUpload, setFileToUpload] = useState<File | null>(null);
   const [result, setResult] = useState<PredictionResult | null>(null);
@@ -142,6 +146,12 @@ const FlowerVision: React.FC = () => {
 
   const onDragOver = (e: React.DragEvent) => {
     e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+    setIsDragging(true);
+  };
+
+  const onDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
     setIsDragging(true);
   };
 
@@ -152,9 +162,30 @@ const FlowerVision: React.FC = () => {
   const onDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
+
+    console.log('Drop event detected');
+
+    // Check for dropped files (from desktop)
     const file = e.dataTransfer.files?.[0];
     if (file) {
+      console.log('File dropped:', file.name);
       processFile(file);
+      return;
+    }
+
+    // Check for dropped URLs (from within the page or other tabs)
+    // Try multiple formats for compatibility
+    const urlData = e.dataTransfer.getData('text/uri-list') ||
+      e.dataTransfer.getData('text/plain') ||
+      e.dataTransfer.getData('URL');
+
+    if (urlData) {
+      console.log('URL dropped:', urlData);
+      // text/uri-list can contain multiple URLs, take the first one
+      const cleanUrl = urlData.split('\n')[0].trim();
+      handleSampleClick(cleanUrl);
+    } else {
+      console.log('No usable drop data found');
     }
   };
 
@@ -245,7 +276,7 @@ const FlowerVision: React.FC = () => {
   const getDiffusionDescription = () => {
     switch (diffusionStage) {
       case 'preparing': return "Initializing...";
-      case 'noise': return "Pure noise...";
+      case 'noise': return "Noise...";
       case 'diffusing': return "Denoising...";
       case 'generated': return "Generation complete.";
       default: return "Watch our custom U-Net denoise random Gaussian noise into a flower over multiple diffusion steps.";
@@ -260,12 +291,16 @@ const FlowerVision: React.FC = () => {
   };
 
   return (
-    <div className="project-page-container">
-      <Link to="/#projects" className="back-link">← Back to Home</Link>
-      <div className="project-header">
-        <h1 className="project-title">Flower Classifier & Generator</h1>
-        <p className="project-subtitle">Computer Vision Pipeline</p>
-      </div>
+    <div className={isEmbedded ? "embedded-project-container" : "project-page-container"}>
+      {!isEmbedded && (
+        <>
+          <Link to="/#projects" className="back-link">← Back to Home</Link>
+          <div className="project-header">
+            <h1 className="project-title">Flower Classifier & Generator</h1>
+            <p className="project-subtitle">Computer Vision Pipeline</p>
+          </div>
+        </>
+      )}
 
       <div className="project-content">
         <div className="info-panel">
@@ -297,9 +332,9 @@ const FlowerVision: React.FC = () => {
           </div>
 
           {activeTab === 'classifier' && (
-            <>
+            <div className="classifier-section">
               <div className="samples-section">
-                <span className="suggested-label" style={{ display: 'block', marginBottom: '1rem' }}>Try an example:</span>
+                <span className="suggested-label" style={{ display: 'block', marginBottom: '1rem', fontSize: '1.1rem' }}>Try an example:</span>
                 <div className="samples-grid">
                   {sampleImages.map((imgUrl, index) => (
                     <img
@@ -308,13 +343,17 @@ const FlowerVision: React.FC = () => {
                       alt={`Sample ${index + 1}`}
                       className="sample-thumbnail"
                       onClick={() => handleSampleClick(imgUrl)}
+                      onDragStart={(e) => {
+                        e.dataTransfer.setData('text/plain', imgUrl);
+                        e.dataTransfer.dropEffect = 'copy';
+                      }}
+                      draggable
                     />
                   ))}
                 </div>
               </div>
 
               <div className="upload-section">
-                <span className="suggested-label" style={{ alignSelf: 'flex-start', marginBottom: '1rem' }}>Or upload your own image:</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -324,9 +363,10 @@ const FlowerVision: React.FC = () => {
                 />
 
                 <div
-                  className={`drop-zone ${isDragging ? 'dragging' : ''}`}
+                  className={`drop-zone ${isDragging ? 'dragging' : ''} ${isEmbedded ? 'embedded-drop' : ''}`}
                   onClick={() => fileInputRef.current?.click()}
                   onDragOver={onDragOver}
+                  onDragEnter={onDragEnter}
                   onDragLeave={onDragLeave}
                   onDrop={onDrop}
                 >
@@ -335,8 +375,7 @@ const FlowerVision: React.FC = () => {
                   ) : (
                     <div className="drop-zone-placeholder">
                       <span className="upload-icon">📸</span>
-                      <p>Click to upload an image</p>
-                      <p className="upload-subtext">JPG, PNG</p>
+                      <p>Click or drag to classify</p>
                     </div>
                   )}
                 </div>
@@ -352,7 +391,7 @@ const FlowerVision: React.FC = () => {
 
                 {error && <div className="error-message" style={{ marginTop: '1rem', width: '100%' }}>{error}</div>}
 
-                <div className="result-container" style={{ minHeight: result || loading ? '180px' : '0', transition: 'min-height 0.3s', width: '100%' }}>
+                <div className="result-container" style={{ minHeight: result || loading ? '60px' : '0', transition: 'min-height 0.3s', width: '100%' }}>
                   {(result || loading) && (
                     <div
                       ref={resultRef}
@@ -370,7 +409,7 @@ const FlowerVision: React.FC = () => {
                           </div>
                         </div>
                       ) : loading ? (
-                        <div style={{ padding: '2rem', textAlign: 'center' }}>
+                        <div style={{ padding: '1rem', textAlign: 'center' }}>
                           <h3 className="prediction-class" style={{ opacity: 0.7 }}>PROCESSING...</h3>
                         </div>
                       ) : null}
@@ -378,17 +417,16 @@ const FlowerVision: React.FC = () => {
                   )}
                 </div>
               </div>
-            </>
+            </div>
           )}
 
           {activeTab === 'generator' && (
             <div className="generator-section">
-              <h3 className="generator-title">Latent Diffusion Denoising</h3>
               <p className={`generator-description stage-${diffusionStage}`}>
                 {getDiffusionDescription()}
               </p>
 
-              <div className="generation-display">
+              <div className={`generation-display ${isEmbedded ? 'embedded-gen-display' : ''}`}>
                 {generatedImageUrl ? (
                   <img
                     src={generatedImageUrl}
@@ -413,7 +451,7 @@ const FlowerVision: React.FC = () => {
                   onClick={() => generateImage('gif', 4)}
                   disabled={isGenerating}
                 >
-                  {isGenerating ? 'Generating...' : 'Regenerate 4 Flowers (GIF)'}
+                  {isGenerating ? 'Generating...' : 'Regenerate'}
                 </button>
               </div>
               {generationError && <div className="error-message" style={{ marginTop: '1rem', width: '100%', textAlign: 'center' }}>{generationError}</div>}
@@ -421,7 +459,7 @@ const FlowerVision: React.FC = () => {
           )}
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 
