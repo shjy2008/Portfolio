@@ -37,6 +37,7 @@ const FlowerVision: React.FC = () => {
   const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationError, setGenerationError] = useState<string | null>(null);
+  const [diffusionStage, setDiffusionStage] = useState<'idle' | 'preparing' | 'noise' | 'diffusing' | 'generated'>('idle');
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
@@ -46,6 +47,22 @@ const FlowerVision: React.FC = () => {
       resultRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   }, [result]);
+
+  useEffect(() => {
+    if (generatedImageUrl) {
+      setDiffusionStage('noise');
+
+      const timer1 = setTimeout(() => setDiffusionStage('diffusing'), 1000);
+      const timer2 = setTimeout(() => {
+        setDiffusionStage('generated');
+      }, 5500); // Adjust this (ms) to match total animation duration (steps * 500ms)
+
+      return () => {
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+      };
+    }
+  }, [generatedImageUrl]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -201,6 +218,7 @@ const FlowerVision: React.FC = () => {
     setIsGenerating(true);
     setGenerationError(null);
     setGeneratedImageUrl(null); // Clear previous image
+    setDiffusionStage('preparing');
 
     const baseUrl = import.meta.env.DEV ? 'http://localhost:8000' : '';
     const endpoint = `${baseUrl}/api/cv/generate?format=${format}&batch_size=${batchSize}`;
@@ -224,10 +242,20 @@ const FlowerVision: React.FC = () => {
     }
   };
 
+  const getDiffusionDescription = () => {
+    switch (diffusionStage) {
+      case 'preparing': return "Initializing...";
+      case 'noise': return "Pure noise...";
+      case 'diffusing': return "Denoising...";
+      case 'generated': return "Generation complete.";
+      default: return "Watch our custom U-Net denoise random Gaussian noise into a flower over multiple diffusion steps.";
+    }
+  };
+
   const handleTabChange = (tab: 'classifier' | 'generator') => {
     setActiveTab(tab);
     if (tab === 'generator' && !generatedImageUrl && !isGenerating) {
-      generateImage('gif', 16);
+      generateImage('gif', 4);
     }
   };
 
@@ -356,16 +384,20 @@ const FlowerVision: React.FC = () => {
           {activeTab === 'generator' && (
             <div className="generator-section">
               <h3 className="generator-title">Latent Diffusion Denoising</h3>
-              <p className="generator-description">
-                Watch our custom U-Net denoise random Gaussian noise into a flower over multiple diffusion steps.
+              <p className={`generator-description stage-${diffusionStage}`}>
+                {getDiffusionDescription()}
               </p>
 
               <div className="generation-display">
                 {generatedImageUrl ? (
-                  <img src={generatedImageUrl} alt="Generated Flower" className="generated-image" />
+                  <img
+                    src={generatedImageUrl}
+                    alt="Generated Flower"
+                    className="generated-image"
+                  />
                 ) : isGenerating ? (
                   <div className="loading-pulse generator-placeholder">
-                    Generating 16 Flowers...
+                    Generating 4 Flowers...
                   </div>
                 ) : (
                   <div className="generator-placeholder">
@@ -378,10 +410,10 @@ const FlowerVision: React.FC = () => {
               <div className="generator-actions">
                 <button
                   className="primary-button"
-                  onClick={() => generateImage('gif', 16)}
+                  onClick={() => generateImage('gif', 4)}
                   disabled={isGenerating}
                 >
-                  {isGenerating ? 'Generating...' : 'Regenerate 16 Flowers (GIF)'}
+                  {isGenerating ? 'Generating...' : 'Regenerate 4 Flowers (GIF)'}
                 </button>
               </div>
               {generationError && <div className="error-message" style={{ marginTop: '1rem', width: '100%', textAlign: 'center' }}>{generationError}</div>}
