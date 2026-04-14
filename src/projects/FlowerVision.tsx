@@ -46,6 +46,21 @@ const FlowerVision: React.FC<FlowerVisionProps> = ({ isEmbedded = false }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
 
+  const isDev = false; // Use Modal even in dev
+  const baseUrl = isDev ? 'http://localhost:8000' : 'https://shjy2015--flower-vision-api-web-app.modal.run';
+
+  const hasFetchedHealth = useRef(false);
+
+  useEffect(() => {
+    if (hasFetchedHealth.current) return;
+    hasFetchedHealth.current = true;
+
+    // Trigger cold start on load
+    fetch(`${baseUrl}/api/cv/health`).catch(() => {
+      // Ignore errors, we just want to wake it up
+    });
+  }, [baseUrl]);
+
   useEffect(() => {
     if (result && resultRef.current) {
       resultRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -220,7 +235,6 @@ const FlowerVision: React.FC<FlowerVisionProps> = ({ isEmbedded = false }) => {
     setLoading(true);
     setError(null);
 
-    const baseUrl = import.meta.env.DEV ? 'http://localhost:8000' : '';
     const endpoint = `${baseUrl}/api/cv/classify`;
 
     const formData = new FormData();
@@ -251,7 +265,6 @@ const FlowerVision: React.FC<FlowerVisionProps> = ({ isEmbedded = false }) => {
     setGeneratedImageUrl(null); // Clear previous image
     setDiffusionStage('preparing');
 
-    const baseUrl = import.meta.env.DEV ? 'http://localhost:8000' : '';
     const endpoint = `${baseUrl}/api/cv/generate?format=${format}&batch_size=${batchSize}`;
 
     try {
@@ -311,7 +324,7 @@ const FlowerVision: React.FC<FlowerVisionProps> = ({ isEmbedded = false }) => {
           <ul>
             <li><b>Image Classifier:</b> Based on CNN, trained on the Oxford Flower dataset using PyTorch. Predicts the specific flower variety given an image. Achieved 81% accuracy on the 10-class dataset and 72% on the 102-class dataset.</li>
             <li><b>Image Generator:</b> A latent diffusion model using an autoencoder and U-Net denoising architecture to generate flower images from noise.</li>
-            <li><b>Real-time Inference:</b> The backend performs classification instantly via a REST API, containerized using Docker and deployed on AWS ECS with Fargate.</li>
+            <li><b>Real-time Inference:</b> The backend performs classification instantly via a REST API, deployed on Modal's serverless GPU infrastructure.</li>
           </ul>
         </div>
 

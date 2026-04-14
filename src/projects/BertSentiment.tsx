@@ -27,7 +27,12 @@ const BertSentiment: React.FC<BertSentimentProps> = ({ isEmbedded = false }) => 
     }
   }, [result]);
 
+  const hasFetchedHealth = useRef(false);
+
   useEffect(() => {
+    if (hasFetchedHealth.current) return;
+    hasFetchedHealth.current = true;
+
     // Trigger cold start on load
     fetch(`${baseUrl}/api/bert/health`).catch(() => {
       // Ignore errors, we just want to wake it up
