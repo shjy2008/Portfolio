@@ -33,6 +33,26 @@ const Home: React.FC = () => {
 
   return (
     <div className="home-container">
+      {/* Top Hero Section - Identity */}
+      <header className="hero-section">
+        <div className="hero-flex">
+          <div className="hero-avatar">
+            <img src={photograph} alt="Junyi Shen" />
+          </div>
+          <div className="hero-text-content">
+            <h1 className="hero-title">Junyi Shen</h1>
+            <p className="hero-subtitle">Senior Software Engineer & AI Researcher</p>
+            <div className="hero-contact">
+              <a href="mailto:shjy2015@gmail.com">shjy2015@gmail.com</a> • <span>Auckland, NZ</span>
+            </div>
+            <div className="hero-badges">
+              <a href="https://github.com/shjy2008" target="_blank" rel="noreferrer" className="badge">GitHub</a>
+              <a href="https://linkedin.com/in/junyi-shen-4122a62b8" target="_blank" rel="noreferrer" className="badge">LinkedIn</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
       {/* Main Interactive Projects - Vertical Stack */}
       <section id="interactive-projects" className="interactive-section">
         <h2 className="section-title">Deep Learning Showcases</h2>
@@ -43,7 +63,7 @@ const Home: React.FC = () => {
               <h3>Flower Classifier & Generator</h3>
               <p>End-to-end Computer Vision pipeline featuring a CNN classifier and a Latent Diffusion U-Net generator.</p>
             </div>
-            <FlowerVision isEmbedded={true} />
+            <FlowerVision />
           </div>
 
           <div className="interactive-panel-card">
@@ -52,7 +72,7 @@ const Home: React.FC = () => {
               <h3>BERT Sentiment Analysis</h3>
               <p>Fine-tuned BERT model for IMDB (Binary) and SST-5 (Fine-grained) sentiment classification task.</p>
             </div>
-            <BertSentiment isEmbedded={true} />
+            <BertSentiment />
           </div>
         </div>
       </section>
@@ -74,26 +94,15 @@ const Home: React.FC = () => {
         </div>
       </main>
 
-      {/* Merged Hero & Skills Section*/}
+      {/* Personal Statement & Skills Section - Below Projects */}
       <section className="my-skills-panel">
         <div className="skills-hero-content">
-          <div className="hero-avatar">
-            <img src={photograph} alt="Junyi Shen" />
-          </div>
           <div className="hero-text-content">
-            <h1 className="hero-title">Junyi Shen</h1>
-            <p className="hero-subtitle">Senior Software Engineer & AI Researcher</p>
-            <div className="hero-contact">
-              <a href="mailto:shjy2015@gmail.com">shjy2015@gmail.com</a> • <span>Auckland, NZ</span>
-            </div>
+            <h2 className="section-title">About Me & Skills</h2>
             <p className="hero-intro">
               10+ years Senior Software Engineer, including 7+ years at <b>NetEase Games</b> where I led a 10-engineer team to deliver the
               globally successful mobile game <b>Onmyoji</b> (250M+ downloads). Master of Applied Science with Distinction (GPA 8.6/9.0) from the University of Otago.
             </p>
-            <div className="hero-badges">
-              <a href="https://github.com/shjy2008" target="_blank" rel="noreferrer" className="badge">GitHub</a>
-              <a href="https://linkedin.com/in/junyi-shen-4122a62b8" target="_blank" rel="noreferrer" className="badge">LinkedIn</a>
-            </div>
           </div>
           <div className="skills-visual-side">
             <img src={skillsImg} alt="Technical Skills Chart" className="skills-small-img" />

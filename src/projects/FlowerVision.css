@@ -270,29 +270,12 @@ canvas.generated-image {
   gap: 0.5rem;
 }
 
-/* Embedded Styles */
-.embedded-project-container {
-  width: 100%;
-}
-
-.embedded-project-container .project-content {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
-}
-
-@media (min-width: 768px) {
-  .embedded-project-container .project-content {
-    grid-template-columns: 1fr 1.5fr;
-  }
-}
-
-.embedded-project-container .classifier-section {
+.classifier-section {
   display: flex;
   flex-direction: column;
   gap: 2rem;
 }
 
-.embedded-project-container .generator-description {
+.generator-description {
   margin-bottom: 1rem;
 }

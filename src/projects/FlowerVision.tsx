@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+
 import './BertSentiment.css'; // Reusing common panel styles
 import './FlowerVision.css';
 
@@ -26,11 +26,9 @@ type PredictionResult = {
   confidence: number;
 };
 
-interface FlowerVisionProps {
-  isEmbedded?: boolean;
-}
 
-const FlowerVision: React.FC<FlowerVisionProps> = ({ isEmbedded = false }) => {
+
+const FlowerVision: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [fileToUpload, setFileToUpload] = useState<File | null>(null);
   const [result, setResult] = useState<PredictionResult | null>(null);
@@ -304,17 +302,7 @@ const FlowerVision: React.FC<FlowerVisionProps> = ({ isEmbedded = false }) => {
   };
 
   return (
-    <div className={isEmbedded ? "embedded-project-container" : "project-page-container"}>
-      {!isEmbedded && (
-        <>
-          <Link to="/#projects" className="back-link">← Back to Home</Link>
-          <div className="project-header">
-            <h1 className="project-title">Flower Classifier & Generator</h1>
-            <p className="project-subtitle">Computer Vision Pipeline</p>
-          </div>
-        </>
-      )}
-
+    <div className="project-container">
       <div className="project-content">
         <div className="info-panel">
           <h3>About this Project</h3>
@@ -376,7 +364,7 @@ const FlowerVision: React.FC<FlowerVisionProps> = ({ isEmbedded = false }) => {
                 />
 
                 <div
-                  className={`drop-zone ${isDragging ? 'dragging' : ''} ${isEmbedded ? 'embedded-drop' : ''}`}
+                  className={`drop-zone ${isDragging ? 'dragging' : ''}`}
                   onClick={() => fileInputRef.current?.click()}
                   onDragOver={onDragOver}
                   onDragEnter={onDragEnter}
@@ -439,7 +427,7 @@ const FlowerVision: React.FC<FlowerVisionProps> = ({ isEmbedded = false }) => {
                 {getDiffusionDescription()}
               </p>
 
-              <div className={`generation-display ${isEmbedded ? 'embedded-gen-display' : ''}`}>
+              <div className="generation-display">
                 {generatedImageUrl ? (
                   <img
                     src={generatedImageUrl}

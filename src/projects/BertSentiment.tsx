@@ -1,12 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+
 import './BertSentiment.css';
 
-interface BertSentimentProps {
-  isEmbedded?: boolean;
-}
 
-const BertSentiment: React.FC<BertSentimentProps> = ({ isEmbedded = false }) => {
+
+const BertSentiment: React.FC = () => {
   type AnalyticsResult =
     | { task: 'cfimdb'; isPositive: boolean; confidence: number }
     | { task: 'sst5'; rating: number; confidence: number };
@@ -78,17 +76,7 @@ const BertSentiment: React.FC<BertSentimentProps> = ({ isEmbedded = false }) => 
   };
 
   return (
-    <div className={isEmbedded ? "embedded-project-container" : "project-page-container"}>
-      {!isEmbedded && (
-        <>
-          <Link to="/#projects" className="back-link">← Back to Home</Link>
-          <div className="project-header">
-            <h1 className="project-title">BERT Sentiment Classifier</h1>
-            <p className="project-subtitle">Natural Language Processing API</p>
-          </div>
-        </>
-      )}
-
+    <div className="project-container">
       <div className="project-content">
         <div className="info-panel">
           <h3>About this Project</h3>

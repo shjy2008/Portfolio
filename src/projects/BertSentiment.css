@@ -1,9 +1,5 @@
-.project-page-container {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-family: 'Inter', sans-serif;
-  color: var(--text-main);
+.project-container {
+  width: 100%;
 }
 
 .project-header {
@@ -172,7 +168,7 @@
 
 .result-box h3 {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 2.5rem;
   font-family: 'Outfit', sans-serif;
 }
 
@@ -240,7 +236,7 @@
 
 /* Rating Styles */
 .highlight-rating {
-  font-size: 2.5rem;
+  font-size: 3.5rem;
   font-weight: 800;
   color: #fbbf24;
   /* Amber/Gold color for stars */
@@ -301,20 +297,4 @@
   font-family: 'Inter', sans-serif;
   opacity: 0.8;
   font-weight: 500;
-}
-/* Embedded Styles */
-.embedded-project-container {
-  width: 100%;
-}
-
-.embedded-project-container .project-content {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
-}
-
-@media (min-width: 768px) {
-  .embedded-project-container .project-content {
-    grid-template-columns: 1fr 1.5fr;
-  }
 }
