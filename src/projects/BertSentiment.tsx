@@ -75,6 +75,15 @@ const BertSentiment: React.FC = () => {
     }
   };
 
+  // Automatically analyze when the task is switched if there is text in the box
+  useEffect(() => {
+    if (text.trim()) {
+      analyzeSentiment();
+    }
+    // We only want to trigger this when the task changes, not on every text change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [task]);
+
   return (
     <div className="project-container">
       <div className="project-content">
@@ -85,8 +94,8 @@ const BertSentiment: React.FC = () => {
             It supports two distinct NLP classification tasks:
           </p>
           <ul>
-            <li><b>IMDB Binary Classification:</b> Trained on the CFIMDB dataset to predict whether a movie review is Positive or Negative. Achieved 98.4% accuracy.</li>
-            <li><b>SST-5 Fine-Grained Classification:</b> Trained on the Stanford Sentiment Treebank to predict a sentiment rating on a 1 to 5 scale. Achieved 59.4% accuracy.</li>
+            <li><b>IMDB Binary Classification:</b> Trained on the CFIMDB dataset to predict whether a movie review is Positive or Negative. Improved accuracy from baseline <b>78.9%</b> to <b>98.4%</b> by performing random hyper-parameter tuning on learning rate, batch size, dropout, weight decay, and layer freezing.</li>
+            <li><b>SST-5 Fine-Grained Classification:</b> Trained on the Stanford Sentiment Treebank to predict a sentiment rating from 1 to 5. Improved accuracy from <b>43.2%</b> to <b>59.4%</b> by implementing CORAL loss for ordinal ratings and pre-training on a 3M movie reviews before fine-tuning.</li>
             <li><b>Real-time Inference:</b> The backend performs classification instantly via a REST API, deployed on Modal's serverless GPU infrastructure.</li>
           </ul>
         </div>
@@ -118,36 +127,29 @@ const BertSentiment: React.FC = () => {
           <div className="suggested-sentences">
             <span className="suggested-label">Try an example:</span>
             <div className="chips">
-              <button
-                className="chip"
-                onClick={() => {
-                  const example = "This movie was absolutely fantastic! I loved every minute of it.";
-                  setText(example);
-                  analyzeSentiment(example);
-                }}
-              >
-                "This movie was absolutely fantastic..."
-              </button>
-              <button
-                className="chip"
-                onClick={() => {
-                  const example = "Terrible acting, the plot makes no sense. Complete waste of time.";
-                  setText(example);
-                  analyzeSentiment(example);
-                }}
-              >
-                "Terrible acting, the plot makes..."
-              </button>
-              <button
-                className="chip"
-                onClick={() => {
-                  const example = "It was okay, not the best but watchable on a Sunday afternoon.";
-                  setText(example);
-                  analyzeSentiment(example);
-                }}
-              >
-                "It was okay, not the best..."
-              </button>
+              {[
+                "This movie was absolutely fantastic! I loved every minute of it.",
+                "Terrible acting, the plot makes no sense. Complete waste of time.",
+                "Visually stunning but the story was a bit lacking in depth.",
+                "A masterpiece of modern cinema. Truly breathtaking.",
+                "It was okay, not the best but watchable on a Sunday.",
+                "The cinematography was great, but dialogue felt wooden.",
+                "Absolute garbage. Don't waste your money.",
+                "I was pleasantly surprised by how much I enjoyed this!",
+                "The plot was predictable and the characters were flat.",
+                "Not my cup of tea, but I can see why others like it."
+              ].map((example, index) => (
+                <button
+                  key={index}
+                  className="chip"
+                  onClick={() => {
+                    setText(example);
+                    analyzeSentiment(example);
+                  }}
+                >
+                  "{example.length > 30 ? example.substring(0, 30) + '...' : example}"
+                </button>
+              ))}
             </div>
           </div>
 
