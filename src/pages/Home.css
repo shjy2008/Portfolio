@@ -51,6 +51,7 @@
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
   transform: rotate(-3deg);
   transition: transform 0.5s ease;
+  will-change: transform;
 }
 
 .hero-avatar:hover {
@@ -127,7 +128,8 @@
   color: var(--text-main);
   text-decoration: none;
   font-weight: 600;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+  will-change: transform;
 }
 
 .badge:hover {
@@ -152,13 +154,14 @@
   width: 100%;
   max-width: 1200px;
   background: var(--glass);
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(10px); /* Reduced from 20px */
   border: 1px solid var(--glass-border);
   border-radius: 40px;
   padding: 4rem;
-  margin-top: 2rem;
   margin-bottom: 5rem;
   box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
 }
 
 .skills-hero-content {
@@ -207,6 +210,7 @@
   width: 100%;
   max-width: 1200px;
   margin-bottom: 6rem;
+  content-visibility: auto;
 }
 
 .interactive-panel-card {
@@ -217,7 +221,7 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  transition: all 0.4s ease;
+  transition: border-color 0.4s ease, background-color 0.4s ease, transform 0.4s ease;
 }
 
 .interactive-panel-card:hover {
@@ -399,13 +403,14 @@
 
 .project-card {
   background: var(--glass);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(8px); /* Reduced from 12px */
   border: 1px solid var(--glass-border);
   border-radius: 24px;
   padding: 2rem;
   text-decoration: none;
   color: inherit;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.4s ease, background-color 0.4s ease, box-shadow 0.4s ease;
+  will-change: transform;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -468,7 +473,7 @@
   gap: 0.5rem;
   color: var(--primary);
   font-weight: 600;
-  transition: gap 0.3s;
+  transition: gap 0.3s ease;
 }
 
 .project-card:hover .project-link {

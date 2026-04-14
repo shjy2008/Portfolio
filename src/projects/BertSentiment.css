@@ -119,7 +119,7 @@
   font-family: 'Inter', sans-serif;
   font-size: 1rem;
   resize: vertical;
-  transition: all 0.3s;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
 }
 
 .text-input:focus {
@@ -136,7 +136,8 @@
   font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  will-change: transform;
 }
 
 .primary-button:hover:not(:disabled) {
@@ -224,7 +225,7 @@
   border-radius: 20px;
   font-size: 0.85rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
   font-family: inherit;
 }
 
