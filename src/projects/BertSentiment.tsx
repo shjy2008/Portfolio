@@ -96,7 +96,7 @@ const BertSentiment: React.FC = () => {
           <ul>
             <li><b>IMDB Binary Classification:</b> Trained on the CFIMDB dataset to predict whether a movie review is Positive or Negative. Improved accuracy from baseline <b>78.9%</b> to <b>98.4%</b> by performing random hyper-parameter tuning on learning rate, batch size, dropout, weight decay, and layer freezing.</li>
             <li><b>SST-5 Fine-Grained Classification:</b> Trained on the Stanford Sentiment Treebank to predict a sentiment rating from 1 to 5. Improved accuracy from <b>43.2%</b> to <b>59.4%</b> by implementing CORAL loss for ordinal ratings and pre-training on a 3M movie reviews before fine-tuning.</li>
-            <li><b>Real-time Inference:</b> The backend performs classification instantly via a REST API, deployed on Modal's serverless GPU infrastructure.</li>
+            <li><b>Real-time Inference:</b> The backend performs classification via a REST API with FastAPI, deployed on Modal's serverless GPU infrastructure.</li>
           </ul>
         </div>
 

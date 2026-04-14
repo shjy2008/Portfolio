@@ -310,9 +310,9 @@ const FlowerVision: React.FC = () => {
             An end-to-end Computer Vision project combining image classification and generative AI.
           </p>
           <ul>
-            <li><b>Image Classifier:</b> Based on CNN, trained on the Oxford Flower dataset using PyTorch. Predicts the specific flower variety given an image. Achieved 81% accuracy on the 10-class dataset and 72% on the 102-class dataset.</li>
-            <li><b>Image Generator:</b> A latent diffusion model using an autoencoder and U-Net denoising architecture to generate flower images from noise.</li>
-            <li><b>Real-time Inference:</b> The backend performs classification instantly via a REST API, deployed on Modal's serverless GPU infrastructure.</li>
+            <li><b>Image Classifier:</b> A PyTorch-based CNN with 0.8M parameters trained on the Oxford Flower dataset. Utilize data augmentation (flip, rotate, colour jitter) and regularization (batch norm, dropout, weight decay) to prevent overfitting. Increased accuracy from <b>66%</b> to <b>81%</b> on the 10-class (coarse-grained) dataset and <b>72%</b> on the 102-class (fine-grained) dataset.</li>
+            <li><b>Image Generator:</b> A latent diffusion system including a 15.9M U-NET denoising model and an autoencoder to generate 96 x 96 flower images from pure random noise over 10 iterative denoising steps.</li>
+            <li><b>Real-time Inference:</b> The backend performs classification and generation via a REST API with FastAPI, deployed on Modal's serverless GPU infrastructure.</li>
           </ul>
         </div>
 
