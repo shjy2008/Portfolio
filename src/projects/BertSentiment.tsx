@@ -18,11 +18,21 @@ const BertSentiment: React.FC<BertSentimentProps> = ({ isEmbedded = false }) => 
   const [error, setError] = useState<string | null>(null);
   const resultRef = useRef<HTMLDivElement>(null);
 
+  const isDev = false; // Now simply use Modal even when dev, so set to false //import.meta.env.DEV;
+  const baseUrl = isDev ? 'http://localhost:8000' : 'https://shjy2015--bert-sentiment-classifier-web-app.modal.run';
+
   useEffect(() => {
     if (result && resultRef.current) {
       resultRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   }, [result]);
+
+  useEffect(() => {
+    // Trigger cold start on load
+    fetch(`${baseUrl}/api/bert/health`).catch(() => {
+      // Ignore errors, we just want to wake it up
+    });
+  }, [baseUrl]);
 
   const analyzeSentiment = async (overrideText?: string) => {
     const textToProcess = typeof overrideText === 'string' ? overrideText : text;
@@ -32,7 +42,6 @@ const BertSentiment: React.FC<BertSentimentProps> = ({ isEmbedded = false }) => 
     setError(null);
     setResult(null);
 
-    const baseUrl = import.meta.env.DEV ? 'http://localhost:8000' : '';
     const endpoint = `${baseUrl}/api/bert/predict/${task}`;
 
     try {
@@ -85,7 +94,7 @@ const BertSentiment: React.FC<BertSentimentProps> = ({ isEmbedded = false }) => 
           <ul>
             <li><b>IMDB Binary Classification:</b> Trained on the CFIMDB dataset to predict whether a movie review is Positive or Negative. Achieved 98.4% accuracy.</li>
             <li><b>SST-5 Fine-Grained Classification:</b> Trained on the Stanford Sentiment Treebank to predict a sentiment rating on a 1 to 5 scale. Achieved 59.4% accuracy.</li>
-            <li><b>Real-time Inference:</b> The backend performs classification instantly via a REST API, containerized using Docker and deployed on AWS ECS with Fargate.</li>
+            <li><b>Real-time Inference:</b> The backend performs classification instantly via a REST API, deployed on Modal's serverless GPU infrastructure.</li>
           </ul>
         </div>
 
