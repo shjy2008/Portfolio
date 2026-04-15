@@ -1,6 +1,7 @@
+"use client";
 import React, { useState, useRef, useEffect } from 'react';
 
-import './BertSentiment.css';
+// Styles moved to pages/_app.tsx to satisfy Next.js global CSS rules
 
 
 
@@ -16,7 +17,7 @@ const BertSentiment: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const resultRef = useRef<HTMLDivElement>(null);
 
-  const isDev = false; // Now simply use Modal even when dev, so set to false //import.meta.env.DEV;
+  const isDev = process.env.NODE_ENV === 'development'; // Now simply use Modal even when dev, so set to false //import.meta.env.DEV;
   const baseUrl = isDev ? 'http://localhost:8000' : 'https://shjy2015--bert-sentiment-classifier-web-app.modal.run';
 
   useEffect(() => {

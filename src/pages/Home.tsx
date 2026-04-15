@@ -1,10 +1,11 @@
 import React from 'react';
-import './Home.css';
+import Image from 'next/image';
+// Home styles are imported globally in pages/_app.tsx
 import photograph from '../assets/Photograph.jpg';
 import skillsImg from '../assets/Skills.png';
 import BertSentiment from '../projects/BertSentiment';
 import FlowerVision from '../projects/FlowerVision';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 const Home: React.FC = () => {
   const otherProjects = [
@@ -37,11 +38,11 @@ const Home: React.FC = () => {
       <header className="hero-section">
         <div className="hero-flex">
           <div className="hero-avatar">
-            <img src={photograph} alt="Junyi Shen" />
+            <Image src={photograph} alt="Junyi Shen" width={250} height={250} className="hero-avatar-image" loading="eager" />
           </div>
           <div className="hero-text-content">
             <h1 className="hero-title">Junyi Shen</h1>
-            <p className="hero-subtitle">Senior Software Engineer & AI Researcher</p>
+            <p className="hero-subtitle">Senior Software & AI Engineer</p>
             <div className="hero-contact">
               <a href="mailto:shjy2015@gmail.com">shjy2015@gmail.com</a> • <span>Auckland, NZ</span>
             </div>
@@ -82,7 +83,7 @@ const Home: React.FC = () => {
         <h2 className="section-title">System & Game Projects</h2>
         <div className="projects-grid">
           {otherProjects.map((project) => (
-            <Link key={project.id} to={project.path} className="project-card">
+            <Link key={project.id} href={project.path} className="project-card">
               <span className="project-tag">{project.tag}</span>
               <h3 className="project-name">{project.name}</h3>
               <p className="project-desc">{project.description}</p>
@@ -104,9 +105,9 @@ const Home: React.FC = () => {
               globally successful mobile game <b>Onmyoji</b> (250M+ downloads). Master of Applied Science with Distinction (GPA 8.6/9.0) from the University of Otago.
             </p>
           </div>
-          <div className="skills-visual-side">
-            <img src={skillsImg} alt="Technical Skills Chart" className="skills-small-img" />
-          </div>
+            <div className="skills-visual-side">
+              <Image src={skillsImg} alt="Technical Skills Chart" className="skills-small-img" />
+            </div>
         </div>
       </section>
 

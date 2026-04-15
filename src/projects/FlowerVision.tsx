@@ -1,7 +1,9 @@
+"use client";
 import React, { useState, useRef, useEffect } from 'react';
+import NextImage from 'next/image';
+import type { StaticImageData } from 'next/image';
 
-import './BertSentiment.css'; // Reusing common panel styles
-import './FlowerVision.css';
+// Styles moved to pages/_app.tsx to satisfy Next.js global CSS rules
 
 import img1 from '../assets/sample_flower_images/image_01209.jpg';
 import img2 from '../assets/sample_flower_images/image_02196.jpg';
@@ -16,7 +18,20 @@ import img10 from '../assets/sample_flower_images/image_07839.jpg';
 import img11 from '../assets/sample_flower_images/image_07897.jpg';
 import img12 from '../assets/sample_flower_images/image_08183.jpg';
 
-const sampleImages = [img1, img2, img3, img4, img5, img6, img7, img8, img9, img10, img11, img12];
+const sampleImages: (string | StaticImageData)[] = [
+  img1,
+  img2,
+  img3,
+  img4,
+  img5,
+  img6,
+  img7,
+  img8,
+  img9,
+  img10,
+  img11,
+  img12,
+];
 
 type PredictionResult = {
   filename: string;
@@ -44,7 +59,7 @@ const FlowerVision: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
 
-  const isDev = false; // Use Modal even in dev
+  const isDev = process.env.NODE_ENV === 'development'; // Use Modal even in dev
   const baseUrl = isDev ? 'http://localhost:8000' : 'https://shjy2015--flower-vision-api-web-app.modal.run';
 
   const hasFetchedHealth = useRef(false);
@@ -202,22 +217,23 @@ const FlowerVision: React.FC = () => {
     }
   };
 
-  const handleSampleClick = async (imgUrl: string) => {
-    setSelectedImage(imgUrl);
+  const handleSampleClick = async (imgUrl: string | StaticImageData) => {
+    const url = typeof imgUrl === 'string' ? imgUrl : imgUrl.src;
+    setSelectedImage(url);
     setError(null);
     setLoading(true);
 
     try {
-      const response = await fetch(imgUrl);
+      const response = await fetch(url);
       const blob = await response.blob();
-      const filename = imgUrl.split('/').pop() || 'sample.jpg';
+      const filename = url.split('/').pop() || 'sample.jpg';
       const file = new File([blob], filename, { type: 'image/jpeg' });
 
       const resizedFile = await resizeImage(file, 96);
       setFileToUpload(resizedFile);
       // We keep the original sample image for preview as it looks better than a 96x96 blown up image
       // but the fileToUpload is now 96x96
-      setSelectedImage(imgUrl);
+      setSelectedImage(url);
       await classifyImage(resizedFile); // Auto-classify (awaited)
     } catch (err: any) {
       setError('Failed to load sample image.');
@@ -338,14 +354,17 @@ const FlowerVision: React.FC = () => {
                 <span className="suggested-label" style={{ display: 'block', marginBottom: '1rem', fontSize: '1.1rem' }}>Try an example:</span>
                 <div className="samples-grid">
                   {sampleImages.map((imgUrl, index) => (
-                    <img
+                    <NextImage
                       key={index}
                       src={imgUrl}
                       alt={`Sample ${index + 1}`}
                       className="sample-thumbnail"
+                      width={96}
+                      height={96}
                       onClick={() => handleSampleClick(imgUrl)}
                       onDragStart={(e) => {
-                        e.dataTransfer.setData('text/plain', imgUrl);
+                        const url = typeof imgUrl === 'string' ? imgUrl : (imgUrl as StaticImageData).src;
+                        e.dataTransfer.setData('text/plain', url);
                         e.dataTransfer.dropEffect = 'copy';
                       }}
                       draggable

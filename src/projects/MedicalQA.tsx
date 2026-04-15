@@ -1,11 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import './BertSentiment.css';
+import Link from 'next/link';
+// Styles (BertSentiment.css) are imported globally in pages/_app.tsx
 
 const MedicalQA: React.FC = () => {
   return (
     <div className="project-page-container">
-      <Link to="/#projects" className="back-link">← Back to Home</Link>
+      <Link href="/#projects" className="back-link">← Back to Home</Link>
       <div className="project-header">
         <h1 className="project-title">LLM+RAG Medical Q&A</h1>
         <p className="project-subtitle">Beyond SOTA: Phi-3-mini Augmented Medical Bot</p>

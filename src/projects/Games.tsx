@@ -1,6 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import './Games.css';
+import Link from 'next/link';
+// Styles moved to pages/_app.tsx to satisfy Next.js global CSS rules
 
 const Games: React.FC = () => {
   const gameProjects = [
@@ -36,7 +36,7 @@ const Games: React.FC = () => {
 
   return (
     <div className="project-page-container">
-      <Link to="/#projects" className="back-link">← Back to Home</Link>
+      <Link href="/#projects" className="back-link">← Back to Home</Link>
       <div className="project-header" style={{ marginBottom: '3rem' }}>
         <h1 className="project-title">Game Development Portfolio</h1>
         <p className="project-subtitle">10+ Years of Engineering Interactive Worlds</p>

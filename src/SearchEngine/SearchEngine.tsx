@@ -1,8 +1,9 @@
 // src/SearchEngine/SearchEngine.tsx
 
+"use client";
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import "./SearchEngine.css";
+import Link from "next/link";
+// Styles moved to pages/_app.tsx to satisfy Next.js global CSS rules
 import type { PubMedDoc } from "./SearchEngineType";
 
 // local
@@ -16,7 +17,7 @@ import type { PubMedDoc } from "./SearchEngineType";
 // const url: string = "https://" + domainName + resourcePath;
 
 // Use local for dev, relative path for production
-const baseUrl = import.meta.env.DEV ? 'http://localhost:8080' : '';
+const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : '';
 const url = `${baseUrl}/api`;
 
 const SUGGESTED_QUERIES: string[] = [
@@ -93,7 +94,7 @@ const SearchEngine: React.FC<SearchEngineProps> = ({ }) => {
 
   return (
     <div className="search-engine">
-      <Link to="/#projects" className="back-link">← Back to Home</Link>
+      <Link href="/#projects" className="back-link">← Back to Home</Link>
       <h1 className="search-title">PubMed Search Engine</h1>
 
       <p className="search-origin">
