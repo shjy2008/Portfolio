@@ -1,6 +1,6 @@
 import '../index.css';
 import '../App.css';
-import '../pages/Home.css';
+import '../features/home/Home.css';
 
 // Project / component global styles
 import '../projects/BertSentiment.css';

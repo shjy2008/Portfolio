@@ -7,13 +7,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
-    "export": "next export",
-    "deploy:static": "npm run build && npm run export && aws s3 sync out/ s3://junyi-portfolio-website --delete"
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx"
   },
   "dependencies": {
-    "form-data": "^4.0.5",
-    "formidable": "^3.5.4",
     "next": "^16.2.3",
     "react": "^19.2.5",
     "react-dom": "^19.2.5"
@@ -23,11 +19,11 @@
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
-    "eslint": "^9.39.1",
+    "@typescript-eslint/eslint-plugin": "^8.46.4",
+    "@typescript-eslint/parser": "^8.46.4",
+    "eslint": "^8.45.0",
     "eslint-plugin-react-hooks": "^7.0.1",
     "globals": "^16.5.0",
-    "typescript": "~5.9.3",
-    "typescript-eslint": "^8.46.4",
-    "vite": "^7.2.4"
+    "typescript": "~5.9.3"
   }
 }

@@ -6,19 +6,45 @@ export default function ScrollToTop() {
   const pathname = usePathname();
 
   useEffect(() => {
-    const hash = typeof window !== 'undefined' ? window.location.hash : '';
-    const id = hash ? hash.substring(1) : null;
+    let frameId = 0;
 
-    // Defer to next tick so the element exists after navigation
-    setTimeout(() => {
-      if (id) {
-        const el = document.getElementById(id);
-        if (el) el.scrollIntoView({ behavior: 'auto' });
-        else window.scrollTo(0, 0);
-      } else {
+    const scrollForCurrentLocation = () => {
+      const hash = window.location.hash;
+      const id = hash ? decodeURIComponent(hash.slice(1)) : "";
+
+      if (!id) {
         window.scrollTo(0, 0);
+        return;
       }
-    }, 0);
+
+      let attempts = 0;
+      const maxAttempts = 10;
+
+      const tryScroll = () => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.scrollIntoView({ behavior: "auto" });
+          return;
+        }
+
+        attempts += 1;
+        if (attempts < maxAttempts) {
+          frameId = window.requestAnimationFrame(tryScroll);
+        } else {
+          window.scrollTo(0, 0);
+        }
+      };
+
+      frameId = window.requestAnimationFrame(tryScroll);
+    };
+
+    scrollForCurrentLocation();
+    window.addEventListener("hashchange", scrollForCurrentLocation);
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      window.removeEventListener("hashchange", scrollForCurrentLocation);
+    };
   }, [pathname]);
 
   return null;

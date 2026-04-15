@@ -1,10 +1,9 @@
 import React from 'react';
 import Image from 'next/image';
-// Home styles are imported globally in pages/_app.tsx
-import photograph from '../assets/Photograph.jpg';
-import skillsImg from '../assets/Skills.png';
-import BertSentiment from '../projects/BertSentiment';
-import FlowerVision from '../projects/FlowerVision';
+import photograph from '../../assets/Photograph.jpg';
+import skillsImg from '../../assets/Skills.png';
+import BertSentiment from '../../projects/BertSentiment';
+import FlowerVision from '../../projects/FlowerVision';
 import Link from 'next/link';
 
 const Home: React.FC = () => {
@@ -14,27 +13,26 @@ const Home: React.FC = () => {
       name: 'BM25 Search Engine',
       description: 'C++ BM25 search engine over 23M PubMed abstracts. Deployed on AWS EC2 with inverted index files (50GB) and React front-end.',
       tag: 'C++ • AWS • React',
-      path: '/search-engine'
+      path: '/search-engine',
     },
     {
       id: 'med-qa',
       name: 'LLM+RAG Medical Q&A',
       description: 'Phi-3-mini (3.8B) based system achieving 76.5% accuracy on MedQA, surpassing SOTA models under 10B parameters. Integrating SPLADE and dense embeddings.',
       tag: 'LLM • RAG • HuggingFace',
-      path: '/medical-qa'
+      path: '/medical-qa',
     },
     {
       id: 'game-dev',
       name: 'Game Development Portfolio',
       description: '10+ years of game dev including Technical Lead for Onmyoji (250M+ downloads), and multiple Unity/Cocos independent titles.',
       tag: 'Unity • C# • C++ • Cocos',
-      path: '/games'
-    }
+      path: '/games',
+    },
   ];
 
   return (
     <div className="home-container">
-      {/* Top Hero Section - Identity */}
       <header className="hero-section">
         <div className="hero-flex">
           <div className="hero-avatar">
@@ -54,7 +52,6 @@ const Home: React.FC = () => {
         </div>
       </header>
 
-      {/* Main Interactive Projects - Vertical Stack */}
       <section id="interactive-projects" className="interactive-section">
         <h2 className="section-title">Deep Learning Showcases</h2>
         <div className="vertical-interactive-stack">
@@ -78,7 +75,6 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Other Featured Projects */}
       <main id="projects" className="projects-section">
         <h2 className="section-title">System & Game Projects</h2>
         <div className="projects-grid">
@@ -95,7 +91,6 @@ const Home: React.FC = () => {
         </div>
       </main>
 
-      {/* Personal Statement & Skills Section - Below Projects */}
       <section className="my-skills-panel">
         <div className="skills-hero-content">
           <div className="hero-text-content">
@@ -105,13 +100,12 @@ const Home: React.FC = () => {
               globally successful mobile game <b>Onmyoji</b> (250M+ downloads). Master of Applied Science with Distinction (GPA 8.6/9.0) from the University of Otago.
             </p>
           </div>
-            <div className="skills-visual-side">
-              <Image src={skillsImg} alt="Technical Skills Chart" className="skills-small-img" />
-            </div>
+          <div className="skills-visual-side">
+            <Image src={skillsImg} alt="Technical Skills Chart" className="skills-small-img" />
+          </div>
         </div>
       </section>
 
-      {/* Career Narrative */}
       <section className="narrative-section">
         <h2 className="section-title">Career Milestones</h2>
         <div className="timeline">
@@ -138,7 +132,6 @@ const Home: React.FC = () => {
           </div>
         </div>
       </section>
-
     </div>
   );
 };

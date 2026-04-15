@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import NextImage from 'next/image';
 import type { StaticImageData } from 'next/image';
 
-// Styles moved to pages/_app.tsx to satisfy Next.js global CSS rules
+// Styles are imported once in src/app/layout.tsx as global CSS
 
 import img1 from '../assets/sample_flower_images/image_01209.jpg';
 import img2 from '../assets/sample_flower_images/image_02196.jpg';

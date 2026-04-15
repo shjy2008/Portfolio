@@ -71,18 +71,23 @@ const SearchEngine: React.FC<SearchEngineProps> = ({ }) => {
   const highlightQuery = (text: string, query: string) => {
     if (!query) return text;
 
-    // Split query into words, filter out empty strings
-    const words = query.trim().split(/\s+/);
+    const escapedWords = query
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((word) => word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+
+    const words = Array.from(new Set(escapedWords));
     if (words.length === 0) return text;
 
-    // Create a regex to match any word, case-insensitive
-    const regex = new RegExp(`\\b(${words.join("|")})\\b`, "gi");
+    const pattern = `\\b(${words.join("|")})\\b`;
+    const splitRegex = new RegExp(pattern, "gi");
+    const matchRegex = new RegExp(pattern, "i");
 
-    // Split text into parts based on the words
-    const parts = text.split(regex);
+    const parts = text.split(splitRegex);
 
     return parts.map((part, idx) =>
-      regex.test(part) ? (
+      matchRegex.test(part) ? (
         <span key={idx} style={{ color: "red", fontWeight: "bold" }}>
           {part}
         </span>

@@ -1,4 +1,4 @@
-/* src/pages/Home.css */
+/* src/features/home/Home.css */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Outfit:wght@300;400;700&display=swap');
 
 :root {
@@ -63,8 +63,6 @@
   height: 100%;
   object-fit: cover;
 }
-
-
 
 .hero-title {
   font-family: 'Outfit', sans-serif;
@@ -154,7 +152,7 @@
   width: 100%;
   max-width: 1200px;
   background: var(--glass);
-  backdrop-filter: blur(10px); /* Reduced from 20px */
+  backdrop-filter: blur(10px);
   border: 1px solid var(--glass-border);
   border-radius: 40px;
   padding: 4rem;
@@ -403,7 +401,7 @@
 
 .project-card {
   background: var(--glass);
-  backdrop-filter: blur(8px); /* Reduced from 12px */
+  backdrop-filter: blur(8px);
   border: 1px solid var(--glass-border);
   border-radius: 24px;
   padding: 2rem;
