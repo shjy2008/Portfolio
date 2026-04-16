@@ -1,10 +1,10 @@
-import { getModalCvBase, getModalHeaders } from '../../../../../lib/server/modal';
+import { getModalBertBase, getModalHeaders } from '../../../../../lib/server/modal';
 
 export async function GET() {
   try {
-    const modalBase = getModalCvBase();
+    const modalBase = getModalBertBase();
     const extraHeaders = getModalHeaders();
-    const upstream = await fetch(`${modalBase}/api/cv/health`, { headers: { ...extraHeaders } });
+    const upstream = await fetch(`${modalBase}/api/bert/health`, { headers: { ...extraHeaders } });
 
     if (!upstream.ok) {
       return new Response('Upstream health check failed', { status: 502 });

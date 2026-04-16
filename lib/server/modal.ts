@@ -1,6 +1,12 @@
-export function getModalBase(): string {
-  const base = process.env.MODAL_BASE_URL;
-  if (!base) throw new Error('MODAL_BASE_URL is not set in the environment');
+export function getModalCvBase(): string {
+  const base = process.env.MODAL_CV_BASE_URL;
+  if (!base) throw new Error('MODAL_CV_BASE_URL is not set in the environment');
+  return base.replace(/\/$/, '');
+}
+
+export function getModalBertBase(): string {
+  const base = process.env.MODAL_BERT_BASE_URL;
+  if (!base) throw new Error('MODAL_BERT_BASE_URL is not set in the environment');
   return base.replace(/\/$/, '');
 }
 
@@ -11,3 +17,4 @@ export function getModalHeaders(): Record<string, string> {
   }
   return headers;
 }
+

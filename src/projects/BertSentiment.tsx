@@ -18,7 +18,7 @@ const BertSentiment: React.FC = () => {
   const resultRef = useRef<HTMLDivElement>(null);
 
   const isDev = process.env.NODE_ENV === 'development'; // Now simply use Modal even when dev, so set to false //import.meta.env.DEV;
-  const baseUrl = isDev ? 'http://localhost:8000' : 'https://shjy2015--bert-sentiment-classifier-web-app.modal.run';
+  const baseUrl = isDev ? 'http://localhost:8000' : ''; //'https://shjy2015--bert-sentiment-classifier-web-app.modal.run';
 
   useEffect(() => {
     if (result && resultRef.current) {

@@ -1,4 +1,4 @@
-import { getModalBase, getModalHeaders } from '../../../../../lib/server/modal';
+import { getModalCvBase, getModalHeaders } from '../../../../../lib/server/modal';
 
 export async function POST(request: Request) {
   try {
@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     const formData = new FormData();
     formData.set('file', fileEntry, fileEntry.name || 'upload.jpg');
 
-    const modalBase = getModalBase();
+    const modalBase = getModalCvBase();
     const extraHeaders = getModalHeaders();
     const upstream = await fetch(`${modalBase}/api/cv/classify`, {
       method: 'POST',

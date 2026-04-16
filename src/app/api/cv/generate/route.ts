@@ -1,4 +1,4 @@
-import { getModalBase, getModalHeaders } from '../../../../../lib/server/modal';
+import { getModalCvBase, getModalHeaders } from '../../../../../lib/server/modal';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -6,7 +6,7 @@ export async function GET(request: Request) {
   const batchSize = searchParams.get('batch_size') ?? '1';
 
   try {
-    const modalBase = getModalBase();
+    const modalBase = getModalCvBase();
     const extraHeaders = getModalHeaders();
     const url = `${modalBase}/api/cv/generate?format=${encodeURIComponent(format)}&batch_size=${encodeURIComponent(batchSize)}`;
     const upstream = await fetch(url, { method: 'GET', headers: { ...extraHeaders } });

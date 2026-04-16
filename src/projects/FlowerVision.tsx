@@ -60,7 +60,7 @@ const FlowerVision: React.FC = () => {
   const resultRef = useRef<HTMLDivElement>(null);
 
   const isDev = process.env.NODE_ENV === 'development'; // Use Modal even in dev
-  const baseUrl = isDev ? 'http://localhost:8000' : 'https://shjy2015--flower-vision-api-web-app.modal.run';
+  const baseUrl = isDev ? 'http://localhost:8000' : ''; //'https://shjy2015--flower-vision-api-web-app.modal.run';
 
   const hasFetchedHealth = useRef(false);
 
