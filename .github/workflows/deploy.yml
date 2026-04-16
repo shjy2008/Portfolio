@@ -1,3 +1,21 @@
+name: Deploy Portfolio to S3 (disabled)
+
+# Keep this workflow file so you can re-enable later, but prevent GitHub
+# from showing "No jobs were run".
+on:
+  workflow_dispatch:
+
+jobs:
+  disabled:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deployment disabled
+        run: echo "This deploy workflow is currently disabled. Uncomment the deployment job to enable."
+
+# ---------------------------------------------------------------------------
+# Original deployment workflow (kept for later)
+# ---------------------------------------------------------------------------
+
 # name: Deploy Portfolio to S3
 
 # on:
