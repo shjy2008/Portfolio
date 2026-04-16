@@ -12,9 +12,17 @@ export function getModalBertBase(): string {
 
 export function getModalHeaders(): Record<string, string> {
   const headers: Record<string, string> = {};
-  if (process.env.MODAL_API_KEY) {
-    headers['Authorization'] = `Bearer ${process.env.MODAL_API_KEY}`;
+
+  // Recommended: Modal "Proxy Auth Tokens" to protect public modal.run URLs.
+  // Your Modal web endpoints must be created with requires_proxy_auth=True.
+  const modalProxyKey = process.env.MODAL_PROXY_KEY;
+  const modalProxySecret = process.env.MODAL_PROXY_SECRET;
+  if (modalProxyKey && modalProxySecret) {
+    headers['Modal-Key'] = modalProxyKey;
+    headers['Modal-Secret'] = modalProxySecret;
+    return headers;
   }
+
   return headers;
 }
 
