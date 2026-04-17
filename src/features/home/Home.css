@@ -219,12 +219,6 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  transition: border-color 0.4s ease, background-color 0.4s ease, transform 0.4s ease;
-}
-
-.interactive-panel-card:hover {
-  border-color: var(--primary);
-  background: rgba(255, 255, 255, 0.05);
 }
 
 .panel-header {
@@ -364,11 +358,10 @@
   padding: 2rem;
   border-radius: 20px;
   border: 1px solid var(--glass-border);
-  transition: transform 0.3s ease;
+  transition: border-color 0.3s ease;
 }
 
 .timeline-item:hover {
-  transform: translateX(10px);
   border-color: rgba(99, 102, 241, 0.3);
 }
 
@@ -390,6 +383,32 @@
   color: var(--text-muted);
   line-height: 1.6;
   font-size: 0.95rem;
+}
+
+.timeline-content ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: var(--text-muted);
+}
+
+.timeline-content li {
+  line-height: 1.6;
+  font-size: 0.95rem;
+  margin-bottom: 0.4rem;
+}
+
+.timeline-content li:last-child {
+  margin-bottom: 0;
+}
+
+.timeline-link {
+  text-decoration: none;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.timeline-link:hover {
+  color: #818cf8;
 }
 
 .projects-grid {

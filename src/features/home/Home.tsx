@@ -40,7 +40,7 @@ const Home: React.FC = () => {
           </div>
           <div className="hero-text-content">
             <h1 className="hero-title">Junyi Shen</h1>
-            <p className="hero-subtitle">Senior Software & AI Engineer</p>
+            <p className="hero-subtitle">Senior Software Engineer & AI Engineer</p>
             <div className="hero-contact">
               <a href="mailto:shjy2015@gmail.com">shjy2015@gmail.com</a> • <span>Auckland, NZ</span>
             </div>
@@ -96,8 +96,8 @@ const Home: React.FC = () => {
           <div className="hero-text-content">
             <h2 className="section-title">About Me & Skills</h2>
             <p className="hero-intro">
-              10+ years Senior Software Engineer, including 7+ years at <b>NetEase Games</b> where I led a 10-engineer team to deliver the
-              globally successful mobile game <b>Onmyoji</b> (250M+ downloads). Master of Applied Science with Distinction (GPA 8.6/9.0) from the University of Otago.
+              Senior Software Engineer and AI Engineer with 10+ years of experience delivering high-impact products. Former Tech Lead at <b>NetEase Games</b>, where I led development for Onmyoji (250M+ downloads).
+              Master of Applied Science (Distinction) from the University of Otago (GPA 8.6/9.0), focused on AI, deep learning, and retrieval systems. I build end-to-end solutions with Computer Vision, Transformers, LLMs/RAG, React/Next.js, FastAPI, and AWS.
             </p>
           </div>
           <div className="skills-visual-side">
@@ -112,22 +112,44 @@ const Home: React.FC = () => {
           <div className="timeline-item">
             <div className="timeline-date">2024 - 2025</div>
             <div className="timeline-content">
-              <h3>Master of Applied Science @ University of Otago</h3>
-              <p>Graduated with Distinction (GPA 8.6/9.0). Specialized in AI, Deep Learning, and Information Retrieval. Developed a Phi-3-based medical RAG system that surpassed industry SOTA benchmarks.</p>
+              <h3>Master of Applied Science, University of Otago</h3>
+              <p>Graduated with Distinction (GPA <b>8.6/9.0</b>), specializing in AI, Deep Learning, and Information Retrieval. Built a Phi-3-mini LLM+RAG medical QA system that achieved 76.5% MedQA accuracy, surpassing all published models under 10B parameters.</p>
             </div>
           </div>
           <div className="timeline-item">
             <div className="timeline-date">2022 - Present</div>
             <div className="timeline-content">
-              <h3>Independent Software Developer</h3>
-              <p>Developed multiple 3D casual games in Unity (C#) and the front-end for 'Teeth Guardian' using TypeScript and CocosCreator.</p>
+              <h3>Independent Software Developer (Contract / Outsourcing)</h3>
+              <ul>
+                <li>Delivered <b>commercial software</b> and game-development projects for external clients as a freelance/outsourcing engineer, from feature planning to release.</li>
+                <li>
+                  Developed <b>Unity (C#)</b> game projects including{' '}
+                  Magic Road{' '}
+                  <a className="timeline-link" href="https://github.com/shjy2008/DrawRoadGame" target="_blank" rel="noreferrer">[GitHub]</a>,{' '}
+                  Bumper Car{' '}
+                  <a className="timeline-link" href="https://github.com/shjy2008/BumperCar" target="_blank" rel="noreferrer">[GitHub]</a>,{' '}
+                  Fight 2048{' '}
+                  <a className="timeline-link" href="https://github.com/shjy2008/Fight2048" target="_blank" rel="noreferrer">[GitHub]</a>, and{' '}
+                  Card Battle{' '}
+                  <a className="timeline-link" href="https://github.com/shjy2008/CardBattle" target="_blank" rel="noreferrer">[GitHub]</a>, implementing gameplay logic, graphics, and user interactions.
+                </li>
+                <li>Implemented the full front-end of <i>Teeth Guardian</i> using <b>TypeScript</b> and CocosCreator, including battle mechanics and UI, with <b>REST API</b> integration.</li>
+                <li>Collaborated with client stakeholders to convert product requirements into production-ready deliverables with maintainable code and on-time delivery.</li>
+              </ul>
             </div>
           </div>
           <div className="timeline-item">
             <div className="timeline-date">2015 - 2022</div>
             <div className="timeline-content">
-              <h3>Senior Software Engineer / Tech Lead @ NetEase Games</h3>
-              <p>Led a 10-engineer team for <i>Onmyoji: Yokai Koya</i>. Developed core cross-platform SDKs, UI systems, and optimized engine performance across CPU/GPU for 250M+ users. Inventor of 3 patents in game technology.</p>
+              <h3>Senior Software Engineer / Tech Lead @ NetEase Games (NASDAQ: NTES)</h3>
+              <ul>
+                <li><b>Onmyoji</b> (<a className="timeline-link" href="https://yys.163.com/" target="_blank" rel="noreferrer">Official Site</a>): <b>250M+ downloads</b>, App Store and Google Play <b>Best of 2017</b>; contributed from early concept through launch and live operations.</li>
+                <li>Led front-end system development with <b>Python</b> and <b>C++</b> on NetEase NeoX engine, delivering core UI systems (chat, friend, guild) and optimizing <b>CPU/GPU/memory</b> performance for low-end mobile devices.</li>
+                <li>Implemented a cross-platform <b>LBS Map SDK</b> integration (iOS/Android/Web), including OpenGL context conflict resolution, map interaction, marker rendering, and 3D model display; solution was reused across NetEase projects.</li>
+                <li><b>Onmyoji: Yokai Koya</b> (<a className="timeline-link" href="https://yysygw.163.com/" target="_blank" rel="noreferrer">Official Site</a>): reached Top 5 on China App Store in 2020; owned full development of the physics-based pinball battle system and used frame synchronization to reduce server load and improve gameplay smoothness.</li>
+                <li>As <b>Technical Lead</b>, led a team of 10 engineers, owned system architecture and complex technical problem-solving, mentored junior engineers, and managed full-lifecycle delivery with Git and SVN.</li>
+                <li><b>Inventor of 3 patents</b>: CN201910792871.4, CN201610664229.4, CN201610630096.9 (<a className="timeline-link" href="https://pss-system.cponline.cnipa.gov.cn/conventionalSearch" target="_blank" rel="noreferrer">CNIPA Search</a>).</li>
+              </ul>
             </div>
           </div>
         </div>
