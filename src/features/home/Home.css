@@ -34,6 +34,59 @@
   animation: fadeIn 1s ease-out;
 }
 
+.portfolio-stack-section {
+  width: 100%;
+  max-width: 1200px;
+  margin-bottom: 5rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.stack-content {
+  padding: 0.5rem 0 0;
+}
+
+.portfolio-stack-section .section-title {
+  text-align: left;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-main);
+}
+
+.stack-content p {
+  color: var(--text-muted);
+  line-height: 1.75;
+  margin-bottom: 1rem;
+}
+
+.stack-content p:last-child {
+  margin-bottom: 0;
+}
+
+.stack-content ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 2rem;
+}
+
+.stack-content li {
+  color: var(--text-muted);
+  line-height: 1.7;
+  font-size: 0.98rem;
+}
+
+.stack-content li strong {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
 .hero-flex {
   display: flex;
   align-items: center;

@@ -9,13 +9,13 @@ The site showcases software engineering, AI, and game development projects, with
 
 ## Tech Stack
 
-- Next.js (App Router)
+- Next.js
 - React
 - TypeScript
 - CSS
-- FastAPI integrations via Next.js API routes
-- Modal (upstream model services)
-- Vercel (frontend hosting)
+- FastAPI
+- Modal (for model inference)
+- Vercel (Next.js full-stack hosting)
 
 ## Features
 
@@ -87,7 +87,5 @@ App runs at `http://localhost:3000`.
 
 ## Deployment
 
-- Frontend: Vercel
-- Backend model services: Modal (containerized FastAPI services)
-
-There is a disabled GitHub Actions workflow in `.github/workflows/deploy.yml` kept for future use.
+- Front-end and back-end: Next.js on Vercel
+- AI model inference: Modal (containerized FastAPI services)

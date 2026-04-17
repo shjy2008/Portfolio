@@ -170,7 +170,8 @@ const FlowerVision: React.FC = () => {
       setFileToUpload(resizedFile);
       setSelectedImage(URL.createObjectURL(file));
       await classifyImage(resizedFile); // Auto-classify (awaited)
-    } catch (err: any) {
+    } catch (err: unknown) {
+      console.error('Failed to process image:', err);
       setError('Failed to process image.');
     } finally {
       setLoading(false);
@@ -240,7 +241,8 @@ const FlowerVision: React.FC = () => {
       // but the fileToUpload is now 96x96
       setSelectedImage(url);
       await classifyImage(resizedFile); // Auto-classify (awaited)
-    } catch (err: any) {
+    } catch (err: unknown) {
+      console.error('Failed to load sample image:', err);
       setError('Failed to load sample image.');
     } finally {
       setLoading(false);
