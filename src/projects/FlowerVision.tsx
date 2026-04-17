@@ -49,6 +49,7 @@ const FlowerVision: React.FC = () => {
   const [result, setResult] = useState<PredictionResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isCvInitializing, setIsCvInitializing] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [activeTab, setActiveTab] = useState<'classifier' | 'generator'>('classifier');
   const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
@@ -69,9 +70,13 @@ const FlowerVision: React.FC = () => {
     hasFetchedHealth.current = true;
 
     // Trigger cold start on load
-    fetch(`${baseUrl}/api/cv/health`).catch(() => {
-      // Ignore errors, we just want to wake it up
-    });
+    fetch(`${baseUrl}/api/cv/health`)
+      .then((response) => {
+        setIsCvInitializing(!response.ok);
+      })
+      .catch(() => {
+        setIsCvInitializing(true);
+      });
   }, [baseUrl]);
 
   useEffect(() => {
@@ -266,6 +271,7 @@ const FlowerVision: React.FC = () => {
 
       const data = await response.json();
       setResult(data);
+      setIsCvInitializing(false);
     } catch (err: any) {
       setError(err.message || 'An error occurred while classifying the image.');
     } finally {
@@ -430,7 +436,9 @@ const FlowerVision: React.FC = () => {
                         </div>
                       ) : loading ? (
                         <div style={{ padding: '1rem', textAlign: 'center' }}>
-                          <h3 className="prediction-class" style={{ opacity: 0.7 }}>PROCESSING...</h3>
+                          <h3 className="prediction-class" style={{ opacity: 0.7 }}>
+                            {isCvInitializing ? 'INITIALIZING...' : 'PROCESSING...'}
+                          </h3>
                         </div>
                       ) : null}
                     </div>
