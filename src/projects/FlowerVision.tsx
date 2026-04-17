@@ -49,7 +49,7 @@ const FlowerVision: React.FC = () => {
   const [result, setResult] = useState<PredictionResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isCvInitializing, setIsCvInitializing] = useState(false);
+  const [isCvInitializing, setIsCvInitializing] = useState(true);
   const [isDragging, setIsDragging] = useState(false);
   const [activeTab, setActiveTab] = useState<'classifier' | 'generator'>('classifier');
   const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
@@ -71,8 +71,8 @@ const FlowerVision: React.FC = () => {
 
     // Trigger cold start on load
     fetch(`${baseUrl}/api/cv/health`)
-      .then((response) => {
-        setIsCvInitializing(!response.ok);
+      .then(() => {
+        setIsCvInitializing(false);
       })
       .catch(() => {
         setIsCvInitializing(true);
