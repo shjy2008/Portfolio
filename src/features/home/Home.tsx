@@ -161,7 +161,8 @@ const Home: React.FC = () => {
           <ul>
             <li><strong>Front-end:</strong> Next.js, React, TypeScript, CSS</li>
             <li><strong>Back-end:</strong> Next.js API routes</li>
-            <li><strong>Hosting and deployment:</strong> Vercel</li>
+            <li><strong>Hosting and deployment:</strong> Vercel, Modal</li>
+            <li><strong>CI/CD:</strong> GitHub Actions</li>
             <li><strong>AI services:</strong> Custom PyTorch models exposed via FastAPI REST API, containerized and deployed on Modal for inference</li>
           </ul>
         </div>

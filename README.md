@@ -89,3 +89,4 @@ App runs at `http://localhost:3000`.
 
 - Front-end and back-end: Next.js on Vercel
 - AI model inference: Modal (containerized FastAPI services)
+- CI/CD: GitHub Actions

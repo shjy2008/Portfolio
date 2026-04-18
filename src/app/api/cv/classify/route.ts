@@ -1,4 +1,9 @@
-import { getModalCvBase, getModalHeaders } from '../../../../../lib/server/modal';
+import {
+  createInitializingResponse,
+  getModalCvBase,
+  getModalHeaders,
+  isLikelyModelInitializing,
+} from '../../../../../lib/server/modal';
 
 export async function POST(request: Request) {
   try {
@@ -22,6 +27,10 @@ export async function POST(request: Request) {
 
     if (!upstream.ok) {
       const text = await upstream.text();
+      if (isLikelyModelInitializing(upstream.status, text)) {
+        return createInitializingResponse('The computer vision model');
+      }
+
       return new Response(text, { status: upstream.status });
     }
 
@@ -29,6 +38,10 @@ export async function POST(request: Request) {
     return Response.json(data, { status: 200 });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Upstream request failed';
+    if (isLikelyModelInitializing(502, message)) {
+      return createInitializingResponse('The computer vision model');
+    }
+
     return Response.json({ error: message }, { status: 502 });
   }
 }

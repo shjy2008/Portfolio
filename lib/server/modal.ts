@@ -26,3 +26,31 @@ export function getModalHeaders(): Record<string, string> {
   return headers;
 }
 
+export function isLikelyModelInitializing(status: number, bodyText: string): boolean {
+  const normalized = bodyText.toLowerCase();
+
+  if ([502, 503, 504].includes(status)) {
+    return true;
+  }
+
+  return [
+    'initializing',
+    'loading',
+    'warming',
+    'cold start',
+    'starting up',
+    'booting',
+    'unavailable',
+    'timeout',
+  ].some((phrase) => normalized.includes(phrase));
+}
+
+export function createInitializingResponse(serviceName: string, status: number = 503) {
+  return Response.json(
+    {
+      code: 'MODEL_INITIALIZING',
+      message: `${serviceName} is initializing. This can take a few seconds during a cold start.`,
+    },
+    { status }
+  );
+}

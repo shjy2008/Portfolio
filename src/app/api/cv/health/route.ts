@@ -1,4 +1,9 @@
-import { getModalCvBase, getModalHeaders } from '../../../../../lib/server/modal';
+import {
+  createInitializingResponse,
+  getModalCvBase,
+  getModalHeaders,
+  isLikelyModelInitializing,
+} from '../../../../../lib/server/modal';
 
 export async function GET() {
   try {
@@ -7,12 +12,20 @@ export async function GET() {
     const upstream = await fetch(`${modalBase}/api/cv/health`, { headers: { ...extraHeaders } });
 
     if (!upstream.ok) {
-      return new Response('Upstream health check failed', { status: 502 });
+      const text = await upstream.text();
+      if (isLikelyModelInitializing(upstream.status, text)) {
+        return createInitializingResponse('The computer vision service');
+      }
+
+      return Response.json(
+        { code: 'UPSTREAM_HEALTH_FAILED', message: 'Upstream health check failed' },
+        { status: 502 }
+      );
     }
 
     const text = await upstream.text();
     return new Response(text, { status: 200 });
   } catch {
-    return new Response('Upstream unreachable', { status: 502 });
+    return createInitializingResponse('The computer vision service');
   }
 }

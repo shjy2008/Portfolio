@@ -160,6 +160,16 @@
   font-weight: 500;
 }
 
+.status-message {
+  color: #facc15;
+  background: rgba(250, 204, 21, 0.1);
+  border: 1px solid rgba(250, 204, 21, 0.22);
+  padding: 1rem;
+  border-radius: 12px;
+  text-align: center;
+  font-weight: 500;
+}
+
 .result-box {
   padding: 1.5rem;
   border-radius: 12px;

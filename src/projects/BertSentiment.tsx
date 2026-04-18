@@ -15,11 +15,9 @@ const BertSentiment: React.FC = () => {
   const [result, setResult] = useState<AnalyticsResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isModelInitializing, setIsModelInitializing] = useState(true);
   const resultRef = useRef<HTMLDivElement>(null);
-
-  const isDev = process.env.NODE_ENV === 'development'; // Now simply use Modal even when dev, so set to false //import.meta.env.DEV;
-  const baseUrl = isDev ? 'http://localhost:8000' : ''; //'https://shjy2015--bert-sentiment-classifier-web-app.modal.run';
-
+  
   useEffect(() => {
     if (result && resultRef.current) {
       resultRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -33,10 +31,20 @@ const BertSentiment: React.FC = () => {
     hasFetchedHealth.current = true;
 
     // Trigger cold start on load
-    fetch(`${baseUrl}/api/bert/health`).catch(() => {
-      // Ignore errors, we just want to wake it up
-    });
-  }, [baseUrl]);
+    fetch('/api/bert/health')
+      .then(async (response) => {
+        if (!response.ok) {
+          const payload = await response.json().catch(() => null);
+          setIsModelInitializing(payload?.code === 'MODEL_INITIALIZING');
+          return;
+        }
+
+        setIsModelInitializing(false);
+      })
+      .catch(() => {
+        setIsModelInitializing(true);
+      });
+  }, []);
 
   const analyzeSentiment = async (overrideText?: string) => {
     const textToProcess = typeof overrideText === 'string' ? overrideText : text;
@@ -46,10 +54,8 @@ const BertSentiment: React.FC = () => {
     setError(null);
     setResult(null);
 
-    const endpoint = `${baseUrl}/api/bert/predict/${task}`;
-
     try {
-      const response = await fetch(endpoint, {
+      const response = await fetch(`/api/bert/predict/${task}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -58,10 +64,17 @@ const BertSentiment: React.FC = () => {
       });
 
       if (!response.ok) {
-        throw new Error(`API Error: ${response.status}`);
+        const payload = await response.json().catch(() => null);
+        if (payload?.code === 'MODEL_INITIALIZING') {
+          setIsModelInitializing(true);
+          throw new Error(payload.message);
+        }
+
+        throw new Error(payload?.message || payload?.error || `API Error: ${response.status}`);
       }
 
       const data = await response.json();
+      setIsModelInitializing(false);
 
       // Parse the response based on the task
       if (task === 'cfimdb') {
@@ -175,6 +188,12 @@ const BertSentiment: React.FC = () => {
           >
             {loading ? 'Analyzing...' : 'Analyze Sentiment'}
           </button>
+
+          {isModelInitializing && !loading && (
+            <div className="status-message">
+              The sentiment model is initializing. This can take a few seconds during a cold start.
+            </div>
+          )}
 
           {error && <div className="error-message">{error}</div>}
 

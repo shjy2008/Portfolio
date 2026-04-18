@@ -60,8 +60,10 @@ const FlowerVision: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
 
-  const isDev = process.env.NODE_ENV === 'development'; // Use Modal even in dev
-  const baseUrl = isDev ? 'http://localhost:8000' : ''; //'https://shjy2015--flower-vision-api-web-app.modal.run';
+  // const isDev = process.env.NODE_ENV === 'development'; // Use Modal even in dev
+  // const baseUrl = isDev ? 'http://localhost:8000' : ''; //'https://shjy2015--flower-vision-api-web-app.modal.run';
+  // const baseUrl = isDev ? 'https://shjy2015--flower-vision-api-web-app.modal.run' : '';
+  const baseUrl = ''; // Always use relative URL, let proxy handle it
 
   const hasFetchedHealth = useRef(false);
 
@@ -71,7 +73,13 @@ const FlowerVision: React.FC = () => {
 
     // Trigger cold start on load
     fetch(`${baseUrl}/api/cv/health`)
-      .then(() => {
+      .then(async (response) => {
+        if (!response.ok) {
+          const payload = await response.json().catch(() => null);
+          setIsCvInitializing(payload?.code === 'MODEL_INITIALIZING');
+          return;
+        }
+
         setIsCvInitializing(false);
       })
       .catch(() => {
@@ -268,7 +276,13 @@ const FlowerVision: React.FC = () => {
       });
 
       if (!response.ok) {
-        throw new Error(`API Error: ${response.status}`);
+        const payload = await response.json().catch(() => null);
+        if (payload?.code === 'MODEL_INITIALIZING') {
+          setIsCvInitializing(true);
+          throw new Error(payload.message);
+        }
+
+        throw new Error(payload?.message || payload?.error || `API Error: ${response.status}`);
       }
 
       const data = await response.json();
@@ -416,6 +430,12 @@ const FlowerVision: React.FC = () => {
                 >
                   {loading ? 'Classifying...' : 'Classify Image'}
                 </button>
+
+                {isCvInitializing && !loading && (
+                  <div className="status-message" style={{ marginTop: '1rem', width: '100%' }}>
+                    The computer vision model is initializing. This can take a few seconds during a cold start.
+                  </div>
+                )}
 
                 {error && <div className="error-message" style={{ marginTop: '1rem', width: '100%' }}>{error}</div>}
 
