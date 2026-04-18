@@ -10,15 +10,15 @@ const Home: React.FC = () => {
   const otherProjects = [
     {
       id: 'pubmed-search',
-      name: 'BM25 Search Engine',
-      description: 'C++ BM25 search engine over 23M PubMed abstracts. Deployed on AWS EC2 with inverted index files (50GB) and React front-end.',
-      tag: 'C++ • AWS • React',
+      name: 'Medical Search Engine',
+      description: 'C++ BM25 search engine over 23M PubMed abstracts.',
+      tag: 'C++ • Information Retrieval',
       path: '/search-engine',
     },
     {
       id: 'med-qa',
       name: 'LLM+RAG Medical Q&A',
-      description: 'Phi-3-mini (3.8B) based system achieving 76.5% accuracy on MedQA, surpassing SOTA models under 10B parameters. Integrating SPLADE and dense embeddings.',
+      description: 'Phi-3-mini (3.8B) based system achieving 76.5% accuracy on MedQA, surpassing SOTA models under 10B parameters.',
       tag: 'LLM • RAG • HuggingFace',
       path: '/medical-qa',
     },
@@ -113,7 +113,7 @@ const Home: React.FC = () => {
             <div className="timeline-date">2024 - 2025</div>
             <div className="timeline-content">
               <h3>Master of Applied Science, University of Otago</h3>
-              <p>Graduated with Distinction (GPA <b>8.6/9.0</b>), specializing in AI, Deep Learning, and Information Retrieval. Built a Phi-3-mini LLM+RAG medical QA system that achieved 76.5% MedQA accuracy, surpassing all published models under 10B parameters.</p>
+              <p>Graduated with Distinction (GPA <b>8.6/9.0</b>), specializing in AI, Deep Learning, and Information Retrieval. Built a Phi-3-mini (3.8B) LLM+RAG medical QA system that improved MedQA accuracy from 53.4% to 76.5%, surpassing all published models under 10B parameters.</p>
             </div>
           </div>
           <div className="timeline-item">
@@ -160,10 +160,11 @@ const Home: React.FC = () => {
           <h2 className="section-title">Portfolio Tech Stack</h2>
           <ul>
             <li><strong>Front-end:</strong> Next.js, React, TypeScript, CSS</li>
-            <li><strong>Back-end:</strong> Next.js API routes</li>
-            <li><strong>Hosting and deployment:</strong> Vercel, Modal</li>
+            <li><strong>Back-end:</strong> Next.js API routes, FastAPI</li>
+            <li><strong>Current deployment:</strong> Vercel and Modal</li>
+            <li><strong>AWS experience:</strong> EC2, ECS/Fargate, S3, CloudFront</li>
             <li><strong>CI/CD:</strong> GitHub Actions</li>
-            <li><strong>AI services:</strong> Custom PyTorch models exposed via FastAPI REST API, containerized and deployed on Modal for inference</li>
+            <li><strong>AI services:</strong> Custom PyTorch models exposed through FastAPI</li>
           </ul>
         </div>
       </section>
