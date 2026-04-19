@@ -70,9 +70,15 @@
   transition: all 0.3s;
 }
 
-.search-button:hover {
+.search-button:hover:not(:disabled) {
   background: var(--primary-hover);
   transform: translateY(-2px);
+}
+
+.search-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .search-suggestions {

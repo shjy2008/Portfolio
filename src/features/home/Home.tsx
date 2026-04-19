@@ -5,13 +5,14 @@ import skillsImg from '../../assets/Skills.png';
 import BertSentiment from '../../projects/BertSentiment';
 import FlowerVision from '../../projects/FlowerVision';
 import Link from 'next/link';
+import PreWarmApis from './PreWarmApis';
 
 const Home: React.FC = () => {
   const otherProjects = [
     {
       id: 'pubmed-search',
       name: 'Medical Search Engine',
-      description: 'C++ BM25 search engine over 23M PubMed abstracts.',
+      description: 'C++ BM25 search engine over 23M PubMed abstracts, achieving sub-100ms response times on a 50GB index stored in AWS S3 and Modal Volume.',
       tag: 'C++ • Information Retrieval',
       path: '/search-engine',
     },
@@ -33,6 +34,7 @@ const Home: React.FC = () => {
 
   return (
     <div className="home-container">
+      <PreWarmApis />
       <header className="hero-section">
         <div className="hero-flex">
           <div className="hero-avatar">

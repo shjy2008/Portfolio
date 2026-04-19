@@ -10,6 +10,12 @@ export function getModalBertBase(): string {
   return base.replace(/\/$/, '');
 }
 
+export function getModalSearchBase(): string {
+  const base = process.env.MODAL_SEARCH_BASE_URL;
+  if (!base) throw new Error('MODAL_SEARCH_BASE_URL is not set in the environment');
+  return base.replace(/\/$/, '');
+}
+
 export function getModalHeaders(): Record<string, string> {
   const headers: Record<string, string> = {};
 

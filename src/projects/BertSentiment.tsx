@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
+import { fetchHealthOnce } from '../lib/client/healthCheck';
 
 // Styles moved to pages/_app.tsx to satisfy Next.js global CSS rules
 
@@ -30,20 +31,9 @@ const BertSentiment: React.FC = () => {
     if (hasFetchedHealth.current) return;
     hasFetchedHealth.current = true;
 
-    // Trigger cold start on load
-    fetch('/api/bert/health')
-      .then(async (response) => {
-        if (!response.ok) {
-          const payload = await response.json().catch(() => null);
-          setIsModelInitializing(payload?.code === 'MODEL_INITIALIZING');
-          return;
-        }
-
-        setIsModelInitializing(false);
-      })
-      .catch(() => {
-        setIsModelInitializing(true);
-      });
+    fetchHealthOnce('/api/bert/health').then(({ initialized }) => {
+      setIsModelInitializing(!initialized);
+    });
   }, []);
 
   const analyzeSentiment = async (overrideText?: string) => {
@@ -189,7 +179,7 @@ const BertSentiment: React.FC = () => {
             {loading ? 'Analyzing...' : 'Analyze Sentiment'}
           </button>
 
-          {isModelInitializing && !loading && (
+          {isModelInitializing && (
             <div className="status-message">
               The sentiment model is initializing. This can take a few seconds during a cold start.
             </div>

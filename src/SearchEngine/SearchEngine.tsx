@@ -1,7 +1,8 @@
 // src/SearchEngine/SearchEngine.tsx
 
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { fetchHealthOnce } from "../lib/client/healthCheck";
 import Link from "next/link";
 // Styles moved to pages/_app.tsx to satisfy Next.js global CSS rules
 import type { PubMedDoc } from "./SearchEngineType";
@@ -16,9 +17,7 @@ import type { PubMedDoc } from "./SearchEngineType";
 // const resourcePath: string = "/api";
 // const url: string = "https://" + domainName + resourcePath;
 
-// Use local for dev, relative path for production
-const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : '';
-const url = `${baseUrl}/api`;
+const baseUrl = '';
 
 const SUGGESTED_QUERIES: string[] = [
   "diabetes treatment",
@@ -39,27 +38,59 @@ const SearchEngine: React.FC<SearchEngineProps> = ({ }) => {
   const [error, setError] = useState<string | null>(null);
   const [searchedQuery, setSearchedQuery] = useState<string>("");
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
+  const [isSearchEngineInitializing, setIsSearchEngineInitializing] = useState<boolean>(true);
+  const hasFetchedHealth = useRef(false);
+
+  useEffect(() => {
+    if (hasFetchedHealth.current) return;
+    hasFetchedHealth.current = true;
+
+    fetchHealthOnce(`${baseUrl}/api/search/health`).then(({ initialized }) => {
+      setIsSearchEngineInitializing(!initialized);
+    });
+  }, []);
 
   const handleSearch = async (searchText?: string): Promise<void> => {
     const q = (searchText ?? query).trim();
-    if (!q) return;
+    if (!q || loading) return;
 
     setShowSuggestions(false);
     setLoading(true);
     setError(null);
+    setResults([]);
     setSearchedQuery(q);
 
     try {
-      const res = await fetch(
-        `${url}/search?q=${encodeURIComponent(q)}&k=10`
-      );
+      const res = await fetch(`${baseUrl}/api/search/search`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ query: q, top_k: 10 }),
+      });
 
       if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
+        const payload = await res.json().catch(() => null);
+        if (payload?.code === 'MODEL_INITIALIZING') {
+          setIsSearchEngineInitializing(true);
+          throw new Error(payload.message);
+        }
+        throw new Error(payload?.message || payload?.error || `HTTP ${res.status}`);
       }
 
-      const data: PubMedDoc[] = await res.json();
-      setResults(data);
+      const data = await res.json();
+      // Handle both pure array responses (old backend) and object-with-results-array (new Modal Python backend)
+      const resultsArray = Array.isArray(data) ? data : (data.results || []);
+
+      const mappedResults: PubMedDoc[] = resultsArray.map((item: any) => ({
+        docId: item.doc_id ?? item.docId,
+        docNo: item.doc_no ?? item.docNo,
+        content: item.content,
+        score: item.score
+      }));
+
+      setResults(mappedResults);
+      setIsSearchEngineInitializing(false);
 
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error");
@@ -105,7 +136,7 @@ const SearchEngine: React.FC<SearchEngineProps> = ({ }) => {
       <p className="search-origin">
         <b>Search data source: </b>
         <a href="https://huggingface.co/datasets/MedRAG/pubmed" target="_blank" rel="noopener noreferrer">MedRAG PubMed Dataset</a>
-        - 23.9 million PubMed abstracts, index size: 50GB
+        - 23.9 million PubMed abstracts, index size: 50GB, stored in AWS S3 and Modal Volume
       </p>
 
       <div className="search-bar">
@@ -118,7 +149,8 @@ const SearchEngine: React.FC<SearchEngineProps> = ({ }) => {
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setShowSuggestions(true)}
             onBlur={() => setTimeout(() => setShowSuggestions(false), 150)} // setTimeout so clicks on suggestions can register
-            onKeyDown={(e) => e.key === "Enter" && handleSearch(query)}
+            onKeyDown={(e) => e.key === "Enter" && !loading && handleSearch(query)}
+            disabled={loading}
           />
           {showSuggestions && (
             <div className="search-suggestions">
@@ -129,7 +161,7 @@ const SearchEngine: React.FC<SearchEngineProps> = ({ }) => {
                   onMouseDown={() => {
                     setQuery(suggestion);
                     //setSearchedQuery(suggestion);
-                    handleSearch(suggestion);
+                    if (!loading) handleSearch(suggestion);
                   }}
                 >
                   {suggestion}
@@ -138,12 +170,21 @@ const SearchEngine: React.FC<SearchEngineProps> = ({ }) => {
             </div>
           )}
         </div>
-        <button className="search-button" onClick={() => handleSearch(query)}>
-          Search
+        <button
+          className="search-button"
+          onClick={() => handleSearch(query)}
+          disabled={loading}
+        >
+          {loading ? '...' : 'Search'}
         </button>
       </div>
 
       {loading && <p className="search-status">Searching…</p>}
+      {isSearchEngineInitializing && (
+        <div className="status-message" style={{ margin: '1rem 0' }}>
+          The search engine is initializing. This can take a few seconds during a cold start.
+        </div>
+      )}
       {error && <p className="search-error">{error}</p>}
 
       <div className="search-results">

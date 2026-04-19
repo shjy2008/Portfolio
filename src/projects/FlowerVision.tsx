@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
+import { fetchHealthOnce } from '../lib/client/healthCheck';
 import NextImage from 'next/image';
 import type { StaticImageData } from 'next/image';
 
@@ -71,21 +72,10 @@ const FlowerVision: React.FC = () => {
     if (hasFetchedHealth.current) return;
     hasFetchedHealth.current = true;
 
-    // Trigger cold start on load
-    fetch(`${baseUrl}/api/cv/health`)
-      .then(async (response) => {
-        if (!response.ok) {
-          const payload = await response.json().catch(() => null);
-          setIsCvInitializing(payload?.code === 'MODEL_INITIALIZING');
-          return;
-        }
-
-        setIsCvInitializing(false);
-      })
-      .catch(() => {
-        setIsCvInitializing(true);
-      });
-  }, [baseUrl]);
+    fetchHealthOnce('/api/cv/health').then(({ initialized }) => {
+      setIsCvInitializing(!initialized);
+    });
+  }, []);
 
   useEffect(() => {
     if (result && resultRef.current) {
@@ -263,6 +253,7 @@ const FlowerVision: React.FC = () => {
 
     setLoading(true);
     setError(null);
+    setResult(null);
 
     const endpoint = `${baseUrl}/api/cv/classify`;
 
@@ -431,7 +422,7 @@ const FlowerVision: React.FC = () => {
                   {loading ? 'Classifying...' : 'Classify Image'}
                 </button>
 
-                {isCvInitializing && !loading && (
+                {isCvInitializing && (
                   <div className="status-message" style={{ marginTop: '1rem', width: '100%' }}>
                     The computer vision model is initializing. This can take a few seconds during a cold start.
                   </div>
