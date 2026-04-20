@@ -100,8 +100,8 @@ const BertSentiment: React.FC = () => {
           </p>
           <ul>
             <li><b>Binary Classification:</b> Trained on the IMDB dataset to predict whether a movie review is Positive or Negative. Improved accuracy from baseline <b>78.9%</b> to <b>98.4%</b> by performing random hyper-parameter tuning on learning rate, batch size, dropout, weight decay, and layer freezing.</li>
-            <li><b>Fine-grained Classification:</b> Trained on the Stanford Sentiment Treebank to predict a sentiment rating from 1 to 5. Improved accuracy from <b>43.2%</b> to <b>59.4%</b> by implementing CORAL loss for ordinal ratings and pre-training on a 3M movie reviews before fine-tuning.</li>
-            <li><b>Real-time Inference:</b> The backend performs classification via a REST API with FastAPI, deployed on Modal's serverless GPU infrastructure.</li>
+            <li><b>Fine-grained Classification:</b> Pre-trained on 3 million movie reviews and fine-tuned on the <a href="https://huggingface.co/datasets/SetFit/sst5" target="_blank" rel="noopener noreferrer" className="dataset-link">Stanford Sentiment Treebank</a> to predict a sentiment rating from 1 to 5. Improved accuracy from <b>43.2%</b> to <b>59.4%</b> by implementing CORAL loss for ordinal ratings.</li>
+            <li><b>Real-time Inference:</b> FastAPI endpoint deployed on Modal's serverless CPU.</li>
           </ul>
         </div>
 
@@ -129,90 +129,118 @@ const BertSentiment: React.FC = () => {
             </label>
           </div>
 
-          <div className="suggested-sentences">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.1rem', marginBottom: '0.5rem', marginLeft: '-1rem' }}>
-              <NextImage src={tryMeIcon} alt="Try me" width={100} height={50} className="floating-icon" style={{ objectFit: 'contain' }} />
-              <span className="suggested-label">Click an example image</span>
+          <div className="sentiment-main-layout">
+            <div className="sentiment-left-side">
+              <textarea
+                className="text-input"
+                placeholder="Type a sentence here to analyze its sentiment..."
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    analyzeSentiment();
+                  }
+                }}
+                rows={5}
+              />
+
+              <button
+                className="primary-button"
+                onClick={() => analyzeSentiment()}
+                disabled={loading || !text.trim()}
+              >
+                {loading ? 'Analyzing...' : 'Analyze Sentiment'}
+              </button>
             </div>
-            <div className="chips">
-              {[
-                "This movie was absolutely fantastic! I loved every minute of it.",
-                "Terrible acting, the plot makes no sense. Complete waste of time.",
-                // "Visually stunning but the story was a bit lacking in depth.",
-                // "A masterpiece of modern cinema. Truly breathtaking.",
-                "It was okay, not the best but watchable on a Sunday.",
-                "The cinematography was great, but dialogue felt wooden.",
-                // "Absolute garbage. Don't waste your money.",
-                // "I was pleasantly surprised by how much I enjoyed this!",
-                // "The plot was predictable and the characters were flat.",
-                // "Not my cup of tea, but I can see why others like it."
-              ].map((example, index) => (
-                <button
-                  key={index}
-                  className="chip"
-                  onClick={() => {
-                    setText(example);
-                    analyzeSentiment(example);
-                  }}
-                >
-                  {/* "{example.length > 30 ? example.substring(0, 30) + '...' : example}" */}
-                  {example}
-                </button>
-              ))}
+
+            <div className="sentiment-right-side">
+              <div className="suggested-sentences">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.1rem', marginBottom: '0.5rem', marginLeft: '-1rem' }}>
+                  <NextImage src={tryMeIcon} alt="Try me" width={100} height={50} className="floating-icon" style={{ objectFit: 'contain' }} />
+                  <span className="suggested-label">Click an example</span>
+                </div>
+                <div className="chips">
+                  {[
+                    "This movie was absolutely fantastic! I loved every minute of it.",
+                    "Terrible acting, the plot makes no sense. Complete waste of time.",
+                    "It was okay, not the best but watchable on a Sunday.",
+                    "The cinematography was great, but dialogue felt wooden.",
+                  ].map((example, index) => (
+                    <button
+                      key={index}
+                      className="chip"
+                      onClick={() => {
+                        setText(example);
+                        analyzeSentiment(example);
+                      }}
+                    >
+                      {example}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
 
-          <textarea
-            className="text-input"
-            placeholder="Type a sentence here to analyze its sentiment..."
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                analyzeSentiment();
-              }
-            }}
-            rows={5}
-          />
-
-          <button
-            className="primary-button"
-            onClick={() => analyzeSentiment()}
-            disabled={loading || !text.trim()}
-          >
-            {loading ? 'Analyzing...' : 'Analyze Sentiment'}
-          </button>
-
-          {isModelInitializing && (
-            <div className="status-message">
-              The sentiment model is initializing. This can take a few seconds during a cold start.
+          {(isModelInitializing || error) && (
+            <div className="sentiment-status-container">
+              {isModelInitializing && (
+                <div className="status-message">
+                  The sentiment model is initializing. This can take a few seconds during a cold start.
+                </div>
+              )}
+              {error && <div className="error-message" style={{ marginTop: '0.5rem' }}>{error}</div>}
             </div>
           )}
 
-          {error && <div className="error-message">{error}</div>}
+          {(result || loading) && (
+            <div className="sentiment-result-container">
+              <div
+                ref={resultRef}
+                className={`result-box bert-result ${loading ? 'loading-pulse' : (result?.task === 'cfimdb' ? (result.isPositive ? 'positive' : 'negative') : (result?.rating && result.rating >= 3 ? 'positive' : 'negative'))}`}
+              >
+                {result ? (
+                  <>
+                    {result.task === 'cfimdb' ? (
+                      <h3 className="prediction-class">{result.isPositive ? 'POSITIVE' : 'NEGATIVE'}</h3>
+                    ) : (
+                      <div className="rating-result">
+                        <h3 className="prediction-class">
+                          RATING: <span className="highlight-rating">{result.rating}</span> / 5
+                        </h3>
+                      </div>
+                    )}
 
-          {result && (
-            <div ref={resultRef} className={`result-box ${(result.task === 'cfimdb' && result.isPositive) || (result.task === 'sst5' && result.rating >= 3) ? 'positive' : 'negative'}`}>
-              {result.task === 'cfimdb' ? (
-                <h3>{result.isPositive ? 'Positive' : 'Negative'}</h3>
-              ) : (
-                <div className="rating-result">
-                  <h3>
-                    Rating: <span className="highlight-rating">{result.rating}</span> / 5
-                  </h3>
-                  <div className="stars">
-                    {Array.from({ length: result.rating }).map((_, i) => (
-                      <span key={i} className="star-icon">⭐</span>
-                    ))}
+                    <div className="prediction-details">
+                      {result.task === 'sst5' && (
+                        <div className="detail-item">
+                          <span className="detail-label">Sentiment</span>
+                          <div className="stars" style={{ display: 'flex', gap: '0.2rem' }}>
+                            {Array.from({ length: 5 }).map((_, i) => (
+                              <span key={i} className="star-icon" style={{ opacity: i < (result.rating || 0) ? 1 : 0.2 }}>
+                                ⭐
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {result.confidence !== undefined && (
+                        <div className="detail-item">
+                          <span className="detail-label">Confidence</span>
+                          <span className="detail-value">{(result.confidence * 100).toFixed(2)}%</span>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                ) : loading ? (
+                  <div style={{ width: '100%', textAlign: 'center' }}>
+                    <h3 className="prediction-class" style={{ opacity: 0.7 }}>
+                      {isModelInitializing ? 'INITIALIZING...' : 'PROCESSING...'}
+                    </h3>
                   </div>
-                </div>
-              )}
-              {result.confidence !== undefined && (
-                <div className="confidence-score">
-                  Confidence: {(result.confidence * 100).toFixed(1)}%
-                </div>
-              )}
+                ) : null}
+              </div>
             </div>
           )}
         </div>

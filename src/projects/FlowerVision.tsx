@@ -435,22 +435,15 @@ const FlowerVision: React.FC = () => {
                 </div>
 
                 {isCvInitializing && (
-                  <div className="status-message" style={{ width: '100%', marginTop: '1.5rem' }}>
+                  <div className="status-message" style={{ width: '100%', marginTop: '0.75rem' }}>
                     The computer vision model is initializing. This can take a few seconds during a cold start.
                   </div>
                 )}
 
-                {error && <div className="error-message" style={{ marginTop: isCvInitializing ? '1rem' : '1.5rem', width: '100%' }}>{error}</div>}
+                {error && <div className="error-message" style={{ marginTop: isCvInitializing ? '0.5rem' : '0.75rem', width: '100%' }}>{error}</div>}
 
-                <div className="result-container" style={{
-                  minHeight: result || loading ? '60px' : '0',
-                  transition: 'min-height 0.3s',
-                  width: '100%',
-                  marginTop: (isCvInitializing || error) || (result || loading) ? '1.5rem' : '0',
-                  display: 'flex',
-                  justifyContent: 'center'
-                }}>
-                  {(result || loading) && (
+                {(result || loading) && (
+                  <div className="cv-result-container">
                     <div
                       ref={resultRef}
                       className={`result-box cv-result ${loading ? 'loading-pulse' : 'positive'}`}
@@ -467,15 +460,15 @@ const FlowerVision: React.FC = () => {
                           </div>
                         </div>
                       ) : loading ? (
-                        <div style={{ padding: '1rem', textAlign: 'center' }}>
-                          <h3 className="prediction-class" style={{ opacity: 0.7 }}>
+                        <div style={{ width: '100%', textAlign: 'center' }}>
+                          <h3 className="prediction-class" style={{ opacity: 0.7, margin: 0 }}>
                             {isCvInitializing ? 'INITIALIZING...' : 'PROCESSING...'}
                           </h3>
                         </div>
                       ) : null}
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
