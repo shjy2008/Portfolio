@@ -5,11 +5,13 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import photograph from '../../assets/Photograph.jpg';
 import skillsImg from '../../assets/Skills.png';
-import BertSentiment from '../../projects/BertSentiment';
-import FlowerVision from '../../projects/FlowerVision';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import PreWarmApis from './PreWarmApis';
 import tryDemoIcon from '../../assets/icon/try-demo.png';
+
+const FlowerVision = dynamic(() => import('../../projects/FlowerVision'), { loading: () => <div className="loading-placeholder">Loading Showcase...</div> });
+const BertSentiment = dynamic(() => import('../../projects/BertSentiment'), { loading: () => <div className="loading-placeholder">Loading Showcase...</div> });
 
 
 const Home: React.FC = () => {
@@ -35,6 +37,7 @@ const Home: React.FC = () => {
       description: 'C++ BM25 search engine over 23M PubMed abstracts, achieving sub-100ms response times on a 50GB index stored in Modal Volume.',
       tag: 'C++ • Information Retrieval',
       path: '/search-engine',
+      showDemoBadge: true,
     },
     {
       id: 'med-qa',
@@ -42,13 +45,15 @@ const Home: React.FC = () => {
       description: 'Phi-3-mini (3.8B) based system achieving 76.5% accuracy on MedQA, surpassing SOTA models under 10B parameters.',
       tag: 'LLM • RAG • HuggingFace',
       path: '/medical-qa',
+      showDemoBadge: true,
     },
     {
       id: 'game-dev',
-      name: 'Game Development Portfolio',
-      description: '10+ years of game dev including Technical Lead for Onmyoji (250M+ downloads), and multiple Unity/Cocos independent titles.',
-      tag: 'Unity • C# • C++ • Cocos',
+      name: 'Game Development',
+      description: '10+ years of game dev including Onmyoji (250M+ downloads), and multiple Unity/Cocos commercial games.',
+      tag: 'Python • C# • C++ • Unity',
       path: '/games',
+      showDemoBadge: false,
     },
   ];
 
@@ -126,11 +131,25 @@ const Home: React.FC = () => {
         <div className="projects-grid">
           {otherProjects.map((project) => (
             <Link key={project.id} href={project.path} className="project-card">
-              <span className="project-tag">{project.tag}</span>
-              <h3 className="project-name">{project.name}</h3>
-              <p className="project-desc">{project.description}</p>
-              <div className="project-link">
-                View Project <span>→</span>
+              {project.showDemoBadge && (
+                <div style={{ position: 'absolute', top: '-1.8rem', left: '-2.2rem', zIndex: 15 }}>
+                  <Image
+                    src={tryDemoIcon}
+                    alt="Try Demo"
+                    width={140}
+                    height={70}
+                    className="try-demo-badge"
+                    style={{ objectFit: 'contain' }}
+                  />
+                </div>
+              )}
+              <div className="project-card-content">
+                <span className="project-tag">{project.tag}</span>
+                <h3 className="project-name">{project.name}</h3>
+                <p className="project-desc">{project.description}</p>
+                <div className="project-link">
+                  View Project <span>→</span>
+                </div>
               </div>
             </Link>
           ))}
