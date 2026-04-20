@@ -72,7 +72,6 @@ const Games: React.FC = () => {
       <Link href="/?from=projects" className="back-link">← Back to Home</Link>
       <div className="project-header" style={{ marginBottom: '3rem' }}>
         <h1 className="project-title">Game Development Portfolio</h1>
-        <p className="project-subtitle">10+ Years of Engineering Interactive Worlds — Mobile & Casual Games</p>
       </div>
 
       <div className="games-grid">

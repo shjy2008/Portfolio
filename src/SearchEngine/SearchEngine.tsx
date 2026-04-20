@@ -136,7 +136,7 @@ const SearchEngine: React.FC<SearchEngineProps> = ({ }) => {
       <p className="search-origin">
         <b>Search data source: </b>
         <a href="https://huggingface.co/datasets/MedRAG/pubmed" target="_blank" rel="noopener noreferrer">MedRAG PubMed Dataset</a>
-        - 23.9 million PubMed abstracts, index size: 50GB, stored in AWS S3 and Modal Volume
+        - <b>23.9 million</b> PubMed abstracts, index size: 50GB, stored in Modal Volume
       </p>
 
       <div className="search-bar">
