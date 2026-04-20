@@ -15,7 +15,7 @@ const MedicalQA: React.FC = () => {
         <div className="info-panel">
           <h3>Architectural Overview</h3>
           <p>
-            A high-performance Retreival-Augmented Generation (RAG) system built to answer complex medical questions. 
+            A high-performance Retreival-Augmented Generation (RAG) system built to answer complex medical questions.
             The system achieved 76.5% accuracy on the MedQA dataset, outperforming all published open-weight models under 10B parameters.
           </p>
           <ul>
@@ -27,11 +27,7 @@ const MedicalQA: React.FC = () => {
 
         <div className="demo-panel" style={{ textAlign: 'center', justifyContent: 'center' }}>
           <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🩺</div>
-          <h2>Live Inference Temporarily Offline</h2>
-          <p style={{ color: 'var(--text-muted)', lineHeight: 1.6 }}>
-            The LLM inference server requires a dedicated GPU instance. Due to cloud resource scheduling, 
-            the live interactive Q&A demo is currently scaled down. Source code is available via GitHub.
-          </p>
+          <h2>Live Inference Coming Soon...</h2>
         </div>
       </div>
     </div>

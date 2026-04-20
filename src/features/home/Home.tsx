@@ -43,6 +43,8 @@ const Home: React.FC = () => {
           <div className="hero-text-content">
             <h1 className="hero-title">Junyi Shen</h1>
             <p className="hero-subtitle">Senior Software Engineer & AI Engineer</p>
+            <p> 
+              A high-output engineer bridging domains: from commercial game architecture and full-stack development to training PyTorch models and end-to-end AI deployment.</p>
             <div className="hero-contact">
               <a href="mailto:shjy2015@gmail.com">shjy2015@gmail.com</a> • <span>Auckland, NZ</span>
             </div>
@@ -98,8 +100,9 @@ const Home: React.FC = () => {
           <div className="hero-text-content">
             <h2 className="section-title">About Me & Skills</h2>
             <p className="hero-intro">
-              Senior Software Engineer and AI Engineer with 10+ years of experience delivering high-impact products. Former Tech Lead at <b>NetEase Games</b>, where I led development for Onmyoji (250M+ downloads).
-              Master of Applied Science (Distinction) from the University of Otago (GPA 8.6/9.0), focused on AI, deep learning, and retrieval systems. I build end-to-end solutions with Computer Vision, Transformers, LLMs/RAG, React/Next.js, FastAPI, and AWS.
+              Senior Software Engineer and AI Engineer with 10+ years of experience delivering high-impact products. Former senior software engineer and tech lead at <b>NetEase Games</b>, where I developed large-scale products like Onmyoji (250M+ downloads).
+              Master of Applied Science with Distinction from the University of Otago (GPA 8.6/9.0), focused on AI, deep learning, and information retrieval.
+              A high-output engineer bridging domains: from commercial game architecture and full-stack development to training PyTorch models and end-to-end AI deployment.
             </p>
           </div>
           <div className="skills-visual-side">
