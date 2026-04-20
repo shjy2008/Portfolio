@@ -254,13 +254,13 @@
 .vertical-interactive-stack {
   display: flex;
   flex-direction: column;
-  gap: 4rem;
+  gap: 3rem;
 }
 
 .interactive-section {
   width: 100%;
   max-width: 1200px;
-  margin-bottom: 6rem;
+  margin-bottom: 2rem;
   /* Removed content-visibility: auto as it can cause clipping of overflow elements */
   padding-left: 2rem;
   /* Give space for the hanging badge */
@@ -272,12 +272,12 @@
   background: var(--glass);
   border: 1px solid var(--glass-border);
   border-radius: 32px;
-  padding: 1.5rem 2.5rem;
+  padding: 1.5rem 2.5rem 1.25rem 2.5rem;
   display: flex;
   flex-direction: column;
   gap: 0rem;
   overflow: visible;
-  /* Ensure absolute children aren't clipped */
+  margin-bottom: 2rem;
 }
 
 @keyframes try-demo-shake {
@@ -339,6 +339,8 @@
 
 .panel-header .project-tag {
   margin: 0;
+  align-self: center;
+  transform: translateY(1px);
 }
 
 .panel-header p {
@@ -578,7 +580,7 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   align-self: flex-start;
-  margin-bottom: 1.5rem;
+  margin-bottom: 5rem;
 }
 
 .project-name {
