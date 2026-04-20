@@ -12,6 +12,7 @@ import '../projects/Games.css';
 import Navbar from '../components/Navbar';
 import ScrollToTop from '../components/ScrollToTop';
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata = {
   title: 'Junyi Shen — Portfolio',
@@ -27,6 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main className="content-area">{children}</main>
         </div>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
