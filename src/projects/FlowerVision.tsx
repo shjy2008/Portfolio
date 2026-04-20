@@ -18,6 +18,8 @@ import img9 from '../assets/sample_flower_images/image_07651.jpg';
 import img10 from '../assets/sample_flower_images/image_07839.jpg';
 import img11 from '../assets/sample_flower_images/image_07897.jpg';
 import img12 from '../assets/sample_flower_images/image_08183.jpg';
+import tryMeIcon from '../assets/icon/try.png';
+
 
 const sampleImages: (string | StaticImageData)[] = [
   img1,
@@ -336,12 +338,12 @@ const FlowerVision: React.FC = () => {
         <div className="info-panel">
           <h3>About this Project</h3>
           <p>
-            An end-to-end Computer Vision project combining image classification and generative AI.
+            An end-to-end Computer Vision project with image classification and generative AI.
           </p>
           <ul>
-            <li><b>Image Classifier:</b> A PyTorch-based CNN with 0.8M parameters trained on the Oxford Flower dataset. Utilize data augmentation (flip, rotate, colour jitter) and regularization (batch norm, dropout, weight decay) to prevent overfitting. Increased accuracy from <b>66%</b> to <b>81%</b> on the 10-class (coarse-grained) dataset and <b>72%</b> on the 102-class (fine-grained) dataset.</li>
-            <li><b>Image Generator:</b> A latent diffusion system including a 15.9M U-NET denoising model and an autoencoder to generate 96 x 96 flower images from pure random noise over 10 iterative denoising steps.</li>
-            <li><b>Real-time Inference:</b> The backend performs classification and generation via a REST API with FastAPI, deployed on Modal's serverless GPU infrastructure.</li>
+            <li><b>Image Classifier:</b> A PyTorch-based CNN trained on the <a href="https://www.kaggle.com/competitions/oxford-102-flower-pytorch/data" target="_blank" rel="noopener noreferrer" className="dataset-link">Oxford Flower dataset</a>. Utilize data augmentation (flip, rotate, colour jitter) and regularization (batch norm, dropout, weight decay) to prevent overfitting. Increased accuracy from <b>66%</b> to <b>81%</b> on the 10-class dataset and <b>72%</b> on the 102-class dataset.</li>
+            <li><b>Image Generator:</b> A latent diffusion system including a U-Net denoising model and an autoencoder to generate 96 x 96 flower images from pure random noise over 10 iterative denoising steps.</li>
+            <li><b>Real-time Inference:</b> FastAPI endpoint deployed on Modal's serverless CPU.</li>
           </ul>
         </div>
 
@@ -363,29 +365,6 @@ const FlowerVision: React.FC = () => {
 
           {activeTab === 'classifier' && (
             <div className="classifier-section">
-              <div className="samples-section">
-                <span className="suggested-label" style={{ display: 'block', marginBottom: '1rem', fontSize: '1.1rem' }}>Try an example:</span>
-                <div className="samples-grid">
-                  {sampleImages.map((imgUrl, index) => (
-                    <NextImage
-                      key={index}
-                      src={imgUrl}
-                      alt={`Sample ${index + 1}`}
-                      className="sample-thumbnail"
-                      width={96}
-                      height={96}
-                      onClick={() => handleSampleClick(imgUrl)}
-                      onDragStart={(e) => {
-                        const url = typeof imgUrl === 'string' ? imgUrl : (imgUrl as StaticImageData).src;
-                        e.dataTransfer.setData('text/plain', url);
-                        e.dataTransfer.dropEffect = 'copy';
-                      }}
-                      draggable
-                    />
-                  ))}
-                </div>
-              </div>
-
               <div className="upload-section">
                 <input
                   type="file"
@@ -395,47 +374,87 @@ const FlowerVision: React.FC = () => {
                   onChange={handleFileChange}
                 />
 
-                <div
-                  className={`drop-zone ${isDragging ? 'dragging' : ''}`}
-                  onClick={() => fileInputRef.current?.click()}
-                  onDragOver={onDragOver}
-                  onDragEnter={onDragEnter}
-                  onDragLeave={onDragLeave}
-                  onDrop={onDrop}
-                >
-                  {selectedImage ? (
-                    <img src={selectedImage} alt="Selected" className="preview-image" />
-                  ) : (
-                    <div className="drop-zone-placeholder">
-                      <span className="upload-icon">📸</span>
-                      <p>Click or drag to classify</p>
+                <div className="upload-main-layout">
+                  <div className="upload-left-side">
+                    <div
+                      className={`drop-zone ${isDragging ? 'dragging' : ''}`}
+                      onClick={() => fileInputRef.current?.click()}
+                      onDragOver={onDragOver}
+                      onDragEnter={onDragEnter}
+                      onDragLeave={onDragLeave}
+                      onDrop={onDrop}
+                    >
+                      {selectedImage ? (
+                        <img src={selectedImage} alt="Selected" className="preview-image" />
+                      ) : (
+                        <div className="drop-zone-placeholder">
+                          <span className="upload-icon">📸</span>
+                          <p>Click or drag to classify</p>
+                        </div>
+                      )}
                     </div>
-                  )}
+
+                    <button
+                      className="primary-button"
+                      onClick={() => classifyImage()}
+                      disabled={loading || !fileToUpload}
+                      style={{ width: '100%', marginTop: '1rem' }}
+                    >
+                      {loading ? 'Classifying...' : 'Classify Image'}
+                    </button>
+                  </div>
+
+                  <div className="upload-right-side">
+                    <div className="samples-section" style={{ marginBottom: '1.5rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.1rem', marginBottom: '0.5rem', marginLeft: '-1rem' }}>
+                        <NextImage src={tryMeIcon} alt="Try me" width={100} height={50} className="floating-icon" style={{ objectFit: 'contain' }} />
+                        <span className="suggested-label">Click an example image</span>
+                      </div>
+
+                      <div className="samples-grid">
+                        {sampleImages.map((imgUrl, index) => (
+                          <NextImage
+                            key={index}
+                            src={imgUrl}
+                            alt={`Sample ${index + 1}`}
+                            className="sample-thumbnail"
+                            width={60}
+                            height={60}
+                            onClick={() => handleSampleClick(imgUrl)}
+                            onDragStart={(e) => {
+                              const url = typeof imgUrl === 'string' ? imgUrl : (imgUrl as StaticImageData).src;
+                              e.dataTransfer.setData('text/plain', url);
+                              e.dataTransfer.dropEffect = 'copy';
+                            }}
+                            draggable
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                <button
-                  className="primary-button"
-                  onClick={() => classifyImage()}
-                  disabled={loading || !fileToUpload}
-                  style={{ width: '100%', marginTop: '1rem' }}
-                >
-                  {loading ? 'Classifying...' : 'Classify Image'}
-                </button>
-
                 {isCvInitializing && (
-                  <div className="status-message" style={{ marginTop: '1rem', width: '100%' }}>
+                  <div className="status-message" style={{ width: '100%', marginTop: '1.5rem' }}>
                     The computer vision model is initializing. This can take a few seconds during a cold start.
                   </div>
                 )}
 
-                {error && <div className="error-message" style={{ marginTop: '1rem', width: '100%' }}>{error}</div>}
+                {error && <div className="error-message" style={{ marginTop: isCvInitializing ? '1rem' : '1.5rem', width: '100%' }}>{error}</div>}
 
-                <div className="result-container" style={{ minHeight: result || loading ? '60px' : '0', transition: 'min-height 0.3s', width: '100%' }}>
+                <div className="result-container" style={{
+                  minHeight: result || loading ? '60px' : '0',
+                  transition: 'min-height 0.3s',
+                  width: '100%',
+                  marginTop: (isCvInitializing || error) || (result || loading) ? '1.5rem' : '0',
+                  display: 'flex',
+                  justifyContent: 'center'
+                }}>
                   {(result || loading) && (
                     <div
                       ref={resultRef}
                       className={`result-box cv-result ${loading ? 'loading-pulse' : 'positive'}`}
-                      style={{ position: 'relative', overflow: 'hidden' }}
+                      style={{ position: 'relative', overflow: 'hidden', margin: 0, width: '100%', maxWidth: '500px' }}
                     >
                       {result ? (
                         <div style={{ transition: 'opacity 0.3s' }}>

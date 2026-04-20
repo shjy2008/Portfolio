@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
 import { fetchHealthOnce } from '../lib/client/healthCheck';
+import NextImage from 'next/image';
+import tryMeIcon from '../assets/icon/try.png';
 
 // Styles moved to pages/_app.tsx to satisfy Next.js global CSS rules
 
@@ -18,7 +20,7 @@ const BertSentiment: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isModelInitializing, setIsModelInitializing] = useState(true);
   const resultRef = useRef<HTMLDivElement>(null);
-  
+
   useEffect(() => {
     if (result && resultRef.current) {
       resultRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -94,12 +96,11 @@ const BertSentiment: React.FC = () => {
         <div className="info-panel">
           <h3>About this Project</h3>
           <p>
-            This interactive demo relies on a custom fine-tuned BERT model running on a live PyTorch backend.
-            It supports two distinct NLP classification tasks:
+            Fine-tuned BERT model for IMDB (Binary) and SST-5 (Fine-grained) sentiment classification.
           </p>
           <ul>
-            <li><b>IMDB Binary Classification:</b> Trained on the CFIMDB dataset to predict whether a movie review is Positive or Negative. Improved accuracy from baseline <b>78.9%</b> to <b>98.4%</b> by performing random hyper-parameter tuning on learning rate, batch size, dropout, weight decay, and layer freezing.</li>
-            <li><b>SST-5 Fine-Grained Classification:</b> Trained on the Stanford Sentiment Treebank to predict a sentiment rating from 1 to 5. Improved accuracy from <b>43.2%</b> to <b>59.4%</b> by implementing CORAL loss for ordinal ratings and pre-training on a 3M movie reviews before fine-tuning.</li>
+            <li><b>Binary Classification:</b> Trained on the IMDB dataset to predict whether a movie review is Positive or Negative. Improved accuracy from baseline <b>78.9%</b> to <b>98.4%</b> by performing random hyper-parameter tuning on learning rate, batch size, dropout, weight decay, and layer freezing.</li>
+            <li><b>Fine-grained Classification:</b> Trained on the Stanford Sentiment Treebank to predict a sentiment rating from 1 to 5. Improved accuracy from <b>43.2%</b> to <b>59.4%</b> by implementing CORAL loss for ordinal ratings and pre-training on a 3M movie reviews before fine-tuning.</li>
             <li><b>Real-time Inference:</b> The backend performs classification via a REST API with FastAPI, deployed on Modal's serverless GPU infrastructure.</li>
           </ul>
         </div>
@@ -129,19 +130,22 @@ const BertSentiment: React.FC = () => {
           </div>
 
           <div className="suggested-sentences">
-            <span className="suggested-label">Try an example:</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.1rem', marginBottom: '0.5rem', marginLeft: '-1rem' }}>
+              <NextImage src={tryMeIcon} alt="Try me" width={100} height={50} className="floating-icon" style={{ objectFit: 'contain' }} />
+              <span className="suggested-label">Click an example image</span>
+            </div>
             <div className="chips">
               {[
                 "This movie was absolutely fantastic! I loved every minute of it.",
                 "Terrible acting, the plot makes no sense. Complete waste of time.",
-                "Visually stunning but the story was a bit lacking in depth.",
-                "A masterpiece of modern cinema. Truly breathtaking.",
+                // "Visually stunning but the story was a bit lacking in depth.",
+                // "A masterpiece of modern cinema. Truly breathtaking.",
                 "It was okay, not the best but watchable on a Sunday.",
                 "The cinematography was great, but dialogue felt wooden.",
-                "Absolute garbage. Don't waste your money.",
-                "I was pleasantly surprised by how much I enjoyed this!",
-                "The plot was predictable and the characters were flat.",
-                "Not my cup of tea, but I can see why others like it."
+                // "Absolute garbage. Don't waste your money.",
+                // "I was pleasantly surprised by how much I enjoyed this!",
+                // "The plot was predictable and the characters were flat.",
+                // "Not my cup of tea, but I can see why others like it."
               ].map((example, index) => (
                 <button
                   key={index}
@@ -151,7 +155,8 @@ const BertSentiment: React.FC = () => {
                     analyzeSentiment(example);
                   }}
                 >
-                  "{example.length > 30 ? example.substring(0, 30) + '...' : example}"
+                  {/* "{example.length > 30 ? example.substring(0, 30) + '...' : example}" */}
+                  {example}
                 </button>
               ))}
             </div>

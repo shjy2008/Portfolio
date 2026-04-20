@@ -16,7 +16,7 @@
   background-color: var(--bg-dark);
   color: var(--text-main);
   font-family: 'Inter', sans-serif;
-  padding: 1.5rem;
+  padding: 1.5rem 3rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -261,33 +261,91 @@
   width: 100%;
   max-width: 1200px;
   margin-bottom: 6rem;
-  content-visibility: auto;
+  /* Removed content-visibility: auto as it can cause clipping of overflow elements */
+  padding-left: 2rem;
+  /* Give space for the hanging badge */
+  overflow: visible;
 }
+
 
 .interactive-panel-card {
   background: var(--glass);
   border: 1px solid var(--glass-border);
   border-radius: 32px;
-  padding: 3rem;
+  padding: 1.5rem 2.5rem;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 0rem;
+  overflow: visible;
+  /* Ensure absolute children aren't clipped */
 }
+
+@keyframes try-demo-shake {
+
+  0%,
+  65% {
+    transform: rotate(-30deg) scale(1);
+  }
+
+  70% {
+    transform: rotate(-26deg) scale(1.05);
+  }
+
+  75% {
+    transform: rotate(-34deg) scale(1.05);
+  }
+
+  80% {
+    transform: rotate(-26deg) scale(1.05);
+  }
+
+  85% {
+    transform: rotate(-34deg) scale(1.05);
+  }
+
+  90% {
+    transform: rotate(-26deg) scale(1.05);
+  }
+
+  95% {
+    transform: rotate(-34deg) scale(1.05);
+  }
+
+  100% {
+    transform: rotate(-30deg) scale(1);
+  }
+}
+
+.try-demo-badge {
+  animation: try-demo-shake 2s ease-in-out infinite;
+  transform-origin: center;
+}
+
+
 
 .panel-header {
   margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
 }
 
 .panel-header h3 {
   font-family: 'Outfit', sans-serif;
   font-size: 2rem;
-  margin-top: 1rem;
-  margin-bottom: 0.75rem;
+  margin: 0;
+}
+
+.panel-header .project-tag {
+  margin: 0;
 }
 
 .panel-header p {
   color: var(--text-muted);
   line-height: 1.6;
+  margin-bottom: 0;
+  flex-basis: 100%;
 }
 
 @media (max-width: 1024px) {

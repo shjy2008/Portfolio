@@ -9,6 +9,8 @@ import BertSentiment from '../../projects/BertSentiment';
 import FlowerVision from '../../projects/FlowerVision';
 import Link from 'next/link';
 import PreWarmApis from './PreWarmApis';
+import tryDemoIcon from '../../assets/icon/try-demo.png';
+
 
 const Home: React.FC = () => {
   const searchParams = useSearchParams();
@@ -60,9 +62,11 @@ const Home: React.FC = () => {
           </div>
           <div className="hero-text-content">
             <h1 className="hero-title">Junyi Shen</h1>
-            <p className="hero-subtitle">Senior Software Engineer & AI Engineer</p>
-            <p>
-              A high-output engineer bridging domains: from commercial game architecture and full-stack development to training PyTorch models and end-to-end AI deployment.</p>
+            <p className="hero-subtitle">
+              Software Engineer | AI Engineer | Full Stack Developer
+              <br />
+              Master of Computer Science, University of Otago
+            </p>
             <div className="hero-contact">
               <a href="mailto:shjy2015@gmail.com">shjy2015@gmail.com</a> • <span>Auckland, NZ</span>
             </div>
@@ -77,20 +81,40 @@ const Home: React.FC = () => {
       <section id="interactive-projects" className="interactive-section">
         <h2 className="section-title">Deep Learning Showcases</h2>
         <div className="vertical-interactive-stack">
-          <div className="interactive-panel-card">
+          <div className="interactive-panel-card" style={{ position: 'relative' }}>
+            <div style={{ position: 'absolute', top: '-2.5rem', left: '-3rem', zIndex: 15 }}>
+              <Image
+                src={tryDemoIcon}
+                alt="Try Demo"
+                width={160}
+                height={80}
+                className="try-demo-badge"
+                style={{ objectFit: 'contain' }}
+              />
+            </div>
+
             <div className="panel-header">
-              <span className="project-tag">CV • PyTorch • Diffusion</span>
               <h3>Flower Classifier & Generator</h3>
-              <p>End-to-end Computer Vision pipeline featuring a CNN classifier and a Latent Diffusion U-Net generator.</p>
+              <span className="project-tag">Computer Vision • CNN • Diffusion</span>
             </div>
             <FlowerVision />
           </div>
 
-          <div className="interactive-panel-card">
+          <div className="interactive-panel-card" style={{ position: 'relative' }}>
+            <div style={{ position: 'absolute', top: '-2.5rem', left: '-3rem', zIndex: 15 }}>
+              <Image
+                src={tryDemoIcon}
+                alt="Try Demo"
+                width={160}
+                height={80}
+                className="try-demo-badge"
+                style={{ objectFit: 'contain' }}
+              />
+            </div>
+
             <div className="panel-header">
-              <span className="project-tag">NLP • PyTorch • BERT</span>
               <h3>BERT Sentiment Analysis</h3>
-              <p>Fine-tuned BERT model for IMDB (Binary) and SST-5 (Fine-grained) sentiment classification task.</p>
+              <span className="project-tag">NLP • PyTorch • BERT</span>
             </div>
             <BertSentiment />
           </div>
