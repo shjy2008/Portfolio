@@ -1,4 +1,7 @@
-import React from 'react';
+"use client";
+
+import React, { useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import photograph from '../../assets/Photograph.jpg';
 import skillsImg from '../../assets/Skills.png';
@@ -8,6 +11,21 @@ import Link from 'next/link';
 import PreWarmApis from './PreWarmApis';
 
 const Home: React.FC = () => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  useEffect(() => {
+    const from = searchParams.get('from');
+    if (from === 'projects') {
+      const el = document.getElementById('projects');
+      if (el) {
+        el.scrollIntoView({ behavior: 'instant' });
+        // Clean up the URL
+        router.replace('/', { scroll: false });
+      }
+    }
+  }, [searchParams, router]);
+
   const otherProjects = [
     {
       id: 'pubmed-search',
@@ -43,7 +61,7 @@ const Home: React.FC = () => {
           <div className="hero-text-content">
             <h1 className="hero-title">Junyi Shen</h1>
             <p className="hero-subtitle">Senior Software Engineer & AI Engineer</p>
-            <p> 
+            <p>
               A high-output engineer bridging domains: from commercial game architecture and full-stack development to training PyTorch models and end-to-end AI deployment.</p>
             <div className="hero-contact">
               <a href="mailto:shjy2015@gmail.com">shjy2015@gmail.com</a> • <span>Auckland, NZ</span>

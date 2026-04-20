@@ -130,7 +130,7 @@ const SearchEngine: React.FC<SearchEngineProps> = ({ }) => {
 
   return (
     <div className="search-engine">
-      <Link href="/#projects" className="back-link">← Back to Home</Link>
+      <Link href="/?from=projects" className="back-link">← Back to Home</Link>
       <h1 className="search-title">PubMed Search Engine</h1>
 
       <p className="search-origin">
