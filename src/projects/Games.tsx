@@ -1,49 +1,251 @@
-import React from 'react';
+"use client";
+import React, { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
-// Styles moved to pages/_app.tsx to satisfy Next.js global CSS rules
+import NextImage from 'next/image';
+import arrow from '../assets/icon/arrow.png';
+
+interface GameProject {
+  id: string;
+  title: string;
+  role: string;
+  description: string;
+  officialUrl?: string;
+  githubUrl?: string;
+  videoUrl?: string;
+  videoUrls?: string[];
+  imageUrls?: string[];
+  tags: string[];
+  aspect?: 'portrait' | 'landscape';
+}
+
+const GameCard: React.FC<{ game: GameProject }> = ({ game }) => {
+  const mediaItems = [
+    ...(game.videoUrls || (game.videoUrl ? [game.videoUrl] : [])),
+    ...(game.imageUrls || [])
+  ];
+
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(mediaItems.length > 1);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeftState, setScrollLeftState] = useState(0);
+
+  const checkScroll = () => {
+    if (sliderRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
+      setCanScrollLeft(scrollLeft > 10);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+    }
+  };
+
+  useEffect(() => {
+    checkScroll();
+    window.addEventListener('resize', checkScroll);
+    return () => window.removeEventListener('resize', checkScroll);
+  }, []);
+
+  const handleScroll = () => {
+    checkScroll();
+  };
+
+  const navigate = (direction: 'left' | 'right') => {
+    if (sliderRef.current) {
+      const width = sliderRef.current.getBoundingClientRect().width;
+      sliderRef.current.scrollBy({
+        left: direction === 'left' ? -width : width,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (mediaItems.length <= 1) return;
+    setIsDragging(true);
+    setStartX(e.pageX - (sliderRef.current?.offsetLeft || 0));
+    setScrollLeftState(sliderRef.current?.scrollLeft || 0);
+  };
+
+  const endDragging = () => {
+    if (!isDragging || !sliderRef.current) return;
+
+    const slider = sliderRef.current;
+    const scrollX = slider.scrollLeft;
+    const width = slider.getBoundingClientRect().width;
+
+    setIsDragging(false);
+
+    const targetIndex = Math.round(scrollX / width);
+    slider.scrollTo({
+      left: targetIndex * width,
+      behavior: 'smooth'
+    });
+  };
+
+  const handleMouseLeave = () => {
+    endDragging();
+  };
+
+  const handleMouseUp = () => {
+    endDragging();
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !sliderRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - (sliderRef.current.offsetLeft || 0);
+    const walk = (x - startX) * 2;
+    sliderRef.current.scrollLeft = scrollLeftState - walk;
+  };
+
+  return (
+    <div className={`game-card ${game.id} ${mediaItems.length === 0 ? 'no-media' : ''} ${game.aspect || 'portrait'}`}>
+      {mediaItems.length > 0 && (
+        <div className="game-media-side">
+          <div
+            className={`game-media-slider ${isDragging ? 'dragging' : ''}`}
+            ref={sliderRef}
+            onScroll={handleScroll}
+            onMouseDown={handleMouseDown}
+            onMouseLeave={handleMouseLeave}
+            onMouseUp={handleMouseUp}
+            onMouseMove={handleMouseMove}
+          >
+            {mediaItems.map((item, idx) => {
+              const isVideo = item.toLowerCase().endsWith('.mp4');
+              return (
+                <div key={idx} className="game-media-item">
+                  {isVideo ? (
+                    <video className="game-media-video" autoPlay loop muted playsInline>
+                      <source src={item} type="video/mp4" />
+                    </video>
+                  ) : (
+                    <img src={item} alt={`${game.title} screenshot ${idx + 1}`} className="game-media-img" />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {canScrollLeft && (
+            <button className="slider-arrow left" onClick={(e) => { e.stopPropagation(); navigate('left'); }}>
+              <NextImage src={arrow} alt="Previous" />
+            </button>
+          )}
+          {canScrollRight && (
+            <button className="slider-arrow right" onClick={(e) => { e.stopPropagation(); navigate('right'); }}>
+              <NextImage src={arrow} alt="Next" />
+            </button>
+          )}
+        </div>
+      )}
+
+      <div className="game-card-content">
+        <h2 className="game-title">{game.title}</h2>
+        <div className="game-role">{game.role}</div>
+        <p className="game-desc">{game.description}</p>
+
+        <div className="game-links">
+          {game.officialUrl && (
+            <a href={game.officialUrl} target="_blank" rel="noopener noreferrer" className="game-link">Official Site</a>
+          )}
+          {game.githubUrl && (
+            <a href={game.githubUrl} target="_blank" rel="noopener noreferrer" className="game-link">GitHub</a>
+          )}
+        </div>
+
+        <div className="game-tags">
+          {game.tags.map((tag) => (
+            <span key={tag} className="game-tag">{tag}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const Games: React.FC = () => {
-  const gameProjects = [
+  const gameProjects: GameProject[] = [
     {
       id: 'onmyoji',
       title: 'Onmyoji',
-      role: 'Senior Software Engineer — NetEase Games (May 2015 – Oct 2022)',
+      role: 'Senior Software Engineer — NetEase Games',
       description:
-        'Large-scale mobile RPG (250M+ downloads). Early-stage engineer contributing from concept to launch and live operation. Led development of front-end systems (UI: chat, friends, guild), optimized CPU/GPU/memory performance for low-end devices, and implemented a cross-platform LBS Map SDK (iOS/Android/Web) with OpenGL context conflict solutions, interactive markers, and 3D model rendering. Solution was adopted across multiple NetEase projects.',
+        'Large-scale mobile RPG (250M+ downloads). Early-stage engineer from concept to launch and live operation. Led development of front-end systems, battle logic, optimized CPU/GPU/memory performance, and implemented a cross-platform LBS Map SDK (iOS/Android/Web).',
       officialUrl: 'https://yys.163.com',
-      tags: ['C++', 'Python', 'NeoX Engine', 'OpenGL', 'LBS']
+      videoUrls: ['/assets/projects/onmyoji/video.mp4'],
+      imageUrls: [
+        '/assets/projects/onmyoji/home.jpg',
+        '/assets/projects/onmyoji/prepare.jpg',
+        '/assets/projects/onmyoji/battle.jpg',
+        '/assets/projects/onmyoji/battle2.jpg',
+        '/assets/projects/onmyoji/hero.jpg',
+        '/assets/projects/onmyoji/level.jpg',
+        '/assets/projects/onmyoji/scene.jpg',
+        '/assets/projects/onmyoji/lbs2.jpg',
+        '/assets/projects/onmyoji/lbs_style.jpg',
+      ],
+      tags: ['C++', 'Python', 'NeoX Engine', 'LBS'],
+      aspect: 'landscape'
     },
     {
       id: 'yokai-koya',
       title: 'Onmyoji: Yokai Koya',
-      role: 'Technical Lead — NetEase Games',
+      role: 'Senior Software Engineer — NetEase Games',
       description:
         'Top-5 China App Store title (2020). Responsible for full development of the core battle system — a physics-based pinball mechanic — using frame-synchronization to reduce server load and smooth gameplay. As Technical Lead, managed a team of 10 engineers, designed system architecture, mentored junior engineers, and handled full lifecycle development with Git and SVN.',
       officialUrl: 'https://yysygw.163.com',
-      tags: ['C++', 'NeoX Engine', 'Physics', 'Real-time Sync']
+      videoUrls: [
+        '/assets/projects/yokaikoya/battle.mp4',
+        '/assets/projects/yokaikoya/papercut.mp4'
+      ],
+      imageUrls: [
+        '/assets/projects/yokaikoya/screenshot1.jpeg',
+        '/assets/projects/yokaikoya/screenshot2.jpeg',
+        '/assets/projects/yokaikoya/screenshot3.jpeg'
+      ],
+      tags: ['Real-time Sync Battle System', 'Python', 'C++', 'NeoX Engine', 'Physics'],
+      aspect: 'portrait'
     },
     {
       id: 'magic-road',
       title: 'Magic Road',
-      role: 'Independent — Unity / C#',
+      role: 'Contract — Unity / C#',
       description:
         '3D casual runner featuring procedural track generation, object pooling, and mobile performance optimizations. Implemented gameplay logic, asset streaming, and polish for smooth frame rates on constrained devices.',
       githubUrl: 'https://github.com/junyishen/DrawRoadGame',
-      tags: ['Unity', 'C#', '3D']
+      videoUrls: [
+        '/assets/projects/magic_road/video1.MP4',
+        '/assets/projects/magic_road/video2.mp4'
+      ],
+      imageUrls: [
+        '/assets/projects/magic_road/image1.jpg',
+        '/assets/projects/magic_road/image2.jpg'
+      ],
+      tags: ['Unity', 'C#', '3D'],
+      aspect: 'portrait'
     },
     {
       id: 'bumper-car',
       title: 'Bumper Car',
-      role: 'Independent — Unity / C#',
+      role: 'Contract — Unity / C#',
       description:
         'Arena-based bumper car experience with custom vehicle physics and responsive collision handling. Focused on deterministic interactions and performant simulation.',
       githubUrl: 'https://github.com/junyishen/BumperCar',
-      tags: ['Unity', 'C#', 'Physics']
+      videoUrls: [
+        '/assets/projects/bumper_car/video.mp4'
+      ],
+      imageUrls: [
+        '/assets/projects/bumper_car/image1.jpg',
+        '/assets/projects/bumper_car/image2.jpg'
+      ],
+      tags: ['Unity', 'C#', 'Physics'],
+      aspect: 'portrait'
     },
     {
       id: 'fight-2048',
       title: 'Fight 2048',
-      role: 'Independent — Unity / C#',
+      role: 'Contract — Unity / C#',
       description:
         'Casual competitive mash-up combining 2048-like merging mechanics with real-time combat and progression systems.',
       githubUrl: 'https://github.com/junyishen/Fight2048',
@@ -52,7 +254,7 @@ const Games: React.FC = () => {
     {
       id: 'card-battle',
       title: 'Card Battle',
-      role: 'Independent — Unity / C#',
+      role: 'Contract — Unity / C#',
       description: 'A collectible card game prototype with deck-building and battle resolution systems.',
       githubUrl: 'https://github.com/junyishen/CardBattle',
       tags: ['Unity', 'C#', 'Systems']
@@ -60,7 +262,7 @@ const Games: React.FC = () => {
     {
       id: 'teeth-guardian',
       title: 'Teeth Guardian',
-      role: 'Independent — TypeScript / CocosCreator',
+      role: 'Contract — TypeScript / CocosCreator',
       description:
         'Oral health educational game. Implemented the full front-end battle mechanics, UI systems, and REST API integration to communicate with back-end services.',
       tags: ['TypeScript', 'CocosCreator', 'Web APIs']
@@ -76,28 +278,7 @@ const Games: React.FC = () => {
 
       <div className="games-grid">
         {gameProjects.map((game) => (
-          <div key={game.id} className="game-card">
-            <div className="game-card-content">
-              <h2 className="game-title">{game.title}</h2>
-              <div className="game-role">{game.role}</div>
-              <p className="game-desc">{game.description}</p>
-
-              <div className="game-links">
-                {game.officialUrl && (
-                  <a href={game.officialUrl} target="_blank" rel="noopener noreferrer" className="game-link">Official Site</a>
-                )}
-                {game.githubUrl && (
-                  <a href={game.githubUrl} target="_blank" rel="noopener noreferrer" className="game-link">GitHub</a>
-                )}
-              </div>
-
-              <div className="game-tags">
-                {game.tags.map((tag) => (
-                  <span key={tag} className="game-tag">{tag}</span>
-                ))}
-              </div>
-            </div>
-          </div>
+          <GameCard key={game.id} game={game} />
         ))}
       </div>
     </div>
