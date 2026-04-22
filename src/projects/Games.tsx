@@ -98,6 +98,29 @@ const GameCard: React.FC<{ game: GameProject }> = ({ game }) => {
     sliderRef.current.scrollLeft = scrollLeftState - walk;
   };
 
+  const handleVideoTap = (video: HTMLVideoElement) => {
+    const enhancedVideo = video as HTMLVideoElement & {
+      webkitEnterFullscreen?: () => void;
+      webkitEnterFullScreen?: () => void;
+    };
+
+    if (video.requestFullscreen) {
+      video.requestFullscreen().catch(() => {
+        // Ignore fullscreen rejections and fall through to iOS methods.
+      });
+      return;
+    }
+
+    if (enhancedVideo.webkitEnterFullscreen) {
+      enhancedVideo.webkitEnterFullscreen();
+      return;
+    }
+
+    if (enhancedVideo.webkitEnterFullScreen) {
+      enhancedVideo.webkitEnterFullScreen();
+    }
+  };
+
   return (
     <div className={`game-card ${game.id} ${mediaItems.length === 0 ? 'no-media' : ''} ${game.aspect || 'portrait'}`}>
       {mediaItems.length > 0 && (
@@ -124,6 +147,7 @@ const GameCard: React.FC<{ game: GameProject }> = ({ game }) => {
                       muted 
                       playsInline
                       poster={posterImage}
+                      onClick={(e) => handleVideoTap(e.currentTarget)}
                     >
                       <source src={item} type="video/mp4" />
                     </video>

@@ -199,7 +199,10 @@
   height: 100%;
   object-fit: cover;
   background: #000;
-  pointer-events: none;
+}
+
+.game-media-video {
+  cursor: pointer;
 }
 
 .game-card.portrait .game-media-video,
