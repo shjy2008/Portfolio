@@ -45,3 +45,31 @@
 .navbar-link:hover {
   color: #fff;
 }
+
+@media (max-width: 768px) {
+  .navbar {
+    height: 64px;
+  }
+
+  .navbar-content {
+    padding: 0 1rem;
+  }
+
+  .navbar-logo {
+    font-size: 1.2rem;
+  }
+
+  .navbar-links {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-content {
+    padding: 0 0.75rem;
+  }
+
+  .navbar-link {
+    font-size: 0.85rem;
+  }
+}

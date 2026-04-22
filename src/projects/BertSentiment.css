@@ -431,3 +431,42 @@
   opacity: 0.8;
   font-weight: 500;
 }
+
+@media (max-width: 768px) {
+  .task-selector {
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .prediction-details {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .detail-item {
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .project-title {
+    font-size: 2rem;
+  }
+
+  .project-subtitle {
+    font-size: 1rem;
+  }
+
+  .info-panel,
+  .demo-panel {
+    padding: 1rem;
+  }
+
+  .text-input {
+    height: 11rem;
+  }
+
+  .prediction-class {
+    font-size: 1.35rem !important;
+  }
+}

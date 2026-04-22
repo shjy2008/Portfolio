@@ -9,6 +9,12 @@
   padding-top: 70px; /* Offset for fixed navbar */
 }
 
+@media (max-width: 768px) {
+  .content-area {
+    padding-top: 64px;
+  }
+}
+
 .back-link {
   display: inline-flex;
   align-items: center;

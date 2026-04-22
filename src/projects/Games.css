@@ -43,7 +43,7 @@
 .game-card.portrait .game-media-side {
   aspect-ratio: 1080/2336;
   max-height: 70vh;
-  min-height: 500px;
+  min-height: 420px;
   border-right: 1px solid var(--glass-border);
 }
 
@@ -373,4 +373,87 @@
 .game-link:hover {
   transform: translateY(-3px);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+@media (max-width: 1024px) {
+  .project-page-container {
+    padding: 2.5rem 1.25rem;
+  }
+
+  .games-grid {
+    gap: 1.5rem;
+  }
+
+  .game-card-content,
+  .game-card.landscape .game-card-content {
+    padding: 1.5rem;
+  }
+
+  .game-title {
+    font-size: 1.7rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .project-page-container {
+    padding: 1.5rem 0.9rem;
+  }
+
+  .project-title {
+    font-size: 2rem;
+  }
+
+  .game-card.landscape .game-media-side,
+  .game-card.portrait .game-media-side {
+    border-right: none;
+    border-bottom: 1px solid var(--glass-border);
+  }
+
+  .game-card.landscape .game-media-slider {
+    aspect-ratio: 16/9;
+    max-height: none;
+  }
+
+  .game-card.portrait .game-media-side {
+    min-height: 320px;
+    max-height: 55vh;
+  }
+
+  .game-card.portrait .game-media-slider {
+    aspect-ratio: 9/16;
+  }
+
+  .game-card-content,
+  .game-card.portrait .game-card-content,
+  .game-card.landscape .game-card-content,
+  .game-card.card-battle .game-card-content,
+  .game-card.teeth-guardian .game-card-content {
+    padding: 1rem;
+  }
+
+  .game-title,
+  .game-card.card-battle .game-title,
+  .game-card.teeth-guardian .game-title {
+    font-size: 1.35rem;
+  }
+
+  .game-links {
+    flex-wrap: wrap;
+  }
+
+  .slider-arrow {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-desc {
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  .game-role {
+    font-size: 0.8rem;
+    margin-bottom: 0.9rem;
+  }
 }
