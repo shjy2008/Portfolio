@@ -9,7 +9,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import PreWarmApis from './PreWarmApis';
 import tryDemoIcon from '../../assets/icon/try-demo.png';
-import { otherProjects } from './projectsData';
+import { otherProjects, gameDevelopmentProject } from './projectsData';
 
 const FlowerVision = dynamic(() => import('../../projects/FlowerVision'), { loading: () => <div className="loading-placeholder">Loading Showcase...</div> });
 const BertSentiment = dynamic(() => import('../../projects/BertSentiment'), { loading: () => <div className="loading-placeholder">Loading Showcase...</div> });
@@ -43,8 +43,32 @@ const Hero: React.FC = () => (
 
 const InteractiveProjects: React.FC = () => (
   <section id="interactive-projects" className="interactive-section">
-    <h2 className="section-title">Deep Learning Showcases</h2>
     <div className="vertical-interactive-stack">
+      <div className="game-dev-block">
+        <h2 className="section-title game-dev-title">Game Development</h2>
+        <Link href={gameDevelopmentProject.path} className="project-card" style={{ position: 'relative', textDecoration: 'none', color: 'inherit' }}>
+          <div className="project-card-content game-dev-card-content">
+            <div className="game-dev-logo-wrap">
+              <Image
+                src="/assets/projects/onmyoji/logo.jpg"
+                alt="Onmyoji logo"
+                width={360}
+                height={360}
+                className="game-dev-logo"
+              />
+            </div>
+            <div className="game-dev-text-wrap">
+              <span className="project-tag">{gameDevelopmentProject.tag}</span>
+              <p className="project-desc">{gameDevelopmentProject.description}</p>
+              <div className="project-link">
+                View Projects <span>→</span>
+              </div>
+            </div>
+          </div>
+        </Link>
+      </div>
+
+      <h2 className="section-title interactive-showcase-title">Deep Learning Showcases</h2>
       <div className="interactive-panel-card" style={{ position: 'relative' }}>
         <div style={{ position: 'absolute', top: '-2.5rem', left: '-3rem', zIndex: 15 }}>
           <Image src={tryDemoIcon} alt="Try Demo" width={160} height={80} className="try-demo-badge" style={{ objectFit: 'contain' }} />
@@ -90,7 +114,7 @@ const ProjectCard: React.FC<{ project: typeof otherProjects[0] }> = ({ project }
 
 const ProjectsGrid: React.FC = () => (
   <main id="projects" className="projects-section">
-    <h2 className="section-title">System & Game Projects</h2>
+    <h2 className="section-title">Research Projects</h2>
     <div className="projects-grid">
       {otherProjects.map((p) => <ProjectCard key={p.id} project={p} />)}
     </div>

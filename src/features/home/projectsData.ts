@@ -15,12 +15,13 @@ export const otherProjects = [
     path: '/medical-qa',
     showDemoBadge: true,
   },
-  {
-    id: 'game-dev',
-    name: 'Game Development',
-    description: '10+ years of game dev including Onmyoji (250M+ downloads), and multiple Unity/Cocos commercial games.',
-    tag: 'Python • C# • C++ • Unity',
-    path: '/games',
-    showDemoBadge: false,
-  },
 ];
+
+export const gameDevelopmentProject = {
+  id: 'game-dev',
+  name: 'Game Development',
+  description: '10+ years of game dev including Onmyoji (250M+ downloads), and multiple Unity/Cocos commercial games.',
+  tag: 'Python • C# • C++ • Unity',
+  path: '/games',
+  showDemoBadge: false,
+};
