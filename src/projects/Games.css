@@ -51,6 +51,58 @@
   max-height: 70vh;
 }
 
+.game-card.card-battle .game-media-side,
+.game-card.teeth-guardian .game-media-side {
+  aspect-ratio: 16/9;
+  height: 200px;
+  min-height: 0;
+  max-height: none;
+  align-self: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-card.card-battle .game-card-content,
+.game-card.teeth-guardian .game-card-content {
+  justify-content: flex-start;
+  padding: 1rem 1.5rem;
+}
+
+.game-card.card-battle .game-title,
+.game-card.teeth-guardian .game-title {
+  font-size: 1.5rem;
+  margin-bottom: 0.3rem;
+}
+
+.game-card.card-battle .game-role,
+.game-card.teeth-guardian .game-role {
+  font-size: 0.85rem;
+  margin-bottom: 0.8rem;
+}
+
+.game-card.card-battle .game-desc,
+.game-card.teeth-guardian .game-desc {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.game-card.card-battle .game-media-video,
+.game-card.card-battle .game-media-img,
+.game-card.teeth-guardian .game-media-video,
+.game-card.teeth-guardian .game-media-img {
+  object-fit: cover;
+  object-position: center center;
+}
+
+.game-card.portrait.card-battle .game-media-video,
+.game-card.portrait.card-battle .game-media-img,
+.game-card.portrait.teeth-guardian .game-media-video,
+.game-card.portrait.teeth-guardian .game-media-img {
+  object-fit: cover;
+  object-position: center center;
+}
+
 .game-card.landscape .game-media-slider {
   aspect-ratio: 2336/1080;
   max-height: 70vh;
@@ -200,6 +252,11 @@
 }
 
 .game-card.magic-road .game-media-slider {
+  aspect-ratio: 1080/1920;
+  max-height: 70vh;
+}
+
+.game-card.fight-2048 .game-media-slider {
   aspect-ratio: 1080/1920;
   max-height: 70vh;
 }

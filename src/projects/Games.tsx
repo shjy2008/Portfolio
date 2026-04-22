@@ -248,20 +248,15 @@ const Games: React.FC = () => {
     },
     {
       id: 'fight-2048',
-      title: 'Fight 2048',
+      title: "Oulabu's Dream",
       role: 'Contract — Unity / C#',
       description:
-        'Casual competitive mash-up combining 2048-like merging mechanics with real-time combat and progression systems.',
-      githubUrl: 'https://github.com/junyishen/Fight2048',
+        'A merge-RPG where players combine units to evolve their power. Features include character upgrades, multiple levels, and strategic mid-battle skill boosts.',
+      officialUrl: 'https://www.taptap.cn/app/219376?os=android',
+      videoUrls: [
+        '/assets/projects/fight_2048/video.mp4'
+      ],
       tags: ['Unity', 'C#', 'Game Design']
-    },
-    {
-      id: 'card-battle',
-      title: 'Card Battle',
-      role: 'Contract — Unity / C#',
-      description: 'A collectible card game prototype with deck-building and battle resolution systems.',
-      githubUrl: 'https://github.com/junyishen/CardBattle',
-      tags: ['Unity', 'C#', 'Systems']
     },
     {
       id: 'teeth-guardian',
@@ -269,8 +264,33 @@ const Games: React.FC = () => {
       role: 'Contract — TypeScript / CocosCreator',
       description:
         'Oral health educational game. Implemented the full front-end battle mechanics, UI systems, and REST API integration to communicate with back-end services.',
-      tags: ['TypeScript', 'CocosCreator', 'Web APIs']
-    }
+      imageUrls: [
+        '/assets/projects/teeth_guardian/main.jpg',
+        '/assets/projects/teeth_guardian/level.jpg',
+        '/assets/projects/teeth_guardian/battle.jpg',
+        '/assets/projects/teeth_guardian/win.jpg',
+        '/assets/projects/teeth_guardian/shop.jpg',
+        '/assets/projects/teeth_guardian/calender.jpg',
+        '/assets/projects/teeth_guardian/daily.jpg',
+        '/assets/projects/teeth_guardian/science.jpg',
+        '/assets/projects/teeth_guardian/question.jpg',
+        '/assets/projects/teeth_guardian/chapter.jpg',
+      ],
+      tags: []
+    },
+    {
+      id: 'card-battle',
+      title: 'Card Battle',
+      role: 'Contract — Unity / C#',
+      description: 'A card game prototype with deck-building and battle systems.',
+      // githubUrl: 'https://github.com/junyishen/CardBattle',
+      imageUrls: [
+        '/assets/projects/card_game/image2.jpg',
+        '/assets/projects/card_game/image3.jpg',
+        '/assets/projects/card_game/image1.jpg',
+      ],
+      tags: []
+    },
   ];
 
   return (
