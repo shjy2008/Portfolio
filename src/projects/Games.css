@@ -199,6 +199,16 @@
   top: 46%;
 }
 
+.game-card.magic-road .game-media-slider {
+  aspect-ratio: 1080/1920;
+  max-height: 70vh;
+}
+
+.game-card.bumper-car .game-media-slider {
+  aspect-ratio: 608/1280;
+  max-height: 70vh;
+}
+
 .slider-arrow.left img {
   transform: rotate(180deg);
   /* Flip arrow for right direction */

@@ -113,10 +113,18 @@ const GameCard: React.FC<{ game: GameProject }> = ({ game }) => {
           >
             {mediaItems.map((item, idx) => {
               const isVideo = item.toLowerCase().endsWith('.mp4');
+              const posterImage = game.imageUrls?.[0];
               return (
                 <div key={idx} className="game-media-item">
                   {isVideo ? (
-                    <video className="game-media-video" autoPlay loop muted playsInline>
+                    <video 
+                      className="game-media-video" 
+                      autoPlay 
+                      loop 
+                      muted 
+                      playsInline
+                      poster={posterImage}
+                    >
                       <source src={item} type="video/mp4" />
                     </video>
                   ) : (
@@ -219,8 +227,6 @@ const Games: React.FC = () => {
         '/assets/projects/magic_road/video2.mp4'
       ],
       imageUrls: [
-        '/assets/projects/magic_road/image1.jpg',
-        '/assets/projects/magic_road/image2.jpg'
       ],
       tags: ['Unity', 'C#', '3D'],
       aspect: 'portrait'
@@ -236,8 +242,6 @@ const Games: React.FC = () => {
         '/assets/projects/bumper_car/video.mp4'
       ],
       imageUrls: [
-        '/assets/projects/bumper_car/image1.jpg',
-        '/assets/projects/bumper_car/image2.jpg'
       ],
       tags: ['Unity', 'C#', 'Physics'],
       aspect: 'portrait'
