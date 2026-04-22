@@ -295,7 +295,7 @@ const Games: React.FC = () => {
 
   return (
     <div className="project-page-container">
-      <Link href="/?from=projects" className="back-link">← Back to Home</Link>
+      <Link href="/" className="back-link">← Back to Home</Link>
       <div className="project-header" style={{ marginBottom: '3rem' }}>
         <h1 className="project-title">Game Development Portfolio</h1>
       </div>
