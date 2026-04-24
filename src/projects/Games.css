@@ -449,6 +449,55 @@
   }
 }
 
+/* iOS fallback when Safari reports wide layout viewport */
+@media only screen and (max-device-width: 932px) {
+  .games-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .game-card,
+  .game-card.landscape,
+  .game-card.portrait {
+    grid-template-columns: 1fr !important;
+  }
+
+  .game-card.landscape .game-media-side,
+  .game-card.portrait .game-media-side {
+    border-right: none !important;
+    border-bottom: 1px solid var(--glass-border) !important;
+  }
+
+  .game-card.landscape .game-media-slider {
+    aspect-ratio: 16/9 !important;
+    max-height: none !important;
+  }
+
+  .game-card.portrait .game-media-side {
+    min-height: 320px !important;
+    max-height: 55vh !important;
+  }
+
+  .game-card.portrait .game-media-slider,
+  .game-card.magic-road .game-media-slider,
+  .game-card.fight-2048 .game-media-slider,
+  .game-card.bumper-car .game-media-slider {
+    aspect-ratio: 9/16 !important;
+    max-height: none !important;
+  }
+
+  .game-card-content,
+  .game-card.portrait .game-card-content,
+  .game-card.landscape .game-card-content,
+  .game-card.card-battle .game-card-content,
+  .game-card.teeth-guardian .game-card-content {
+    padding: 1rem !important;
+  }
+
+  .slider-arrow {
+    display: none !important;
+  }
+}
+
 @media (max-width: 480px) {
   .game-desc {
     font-size: 0.95rem;

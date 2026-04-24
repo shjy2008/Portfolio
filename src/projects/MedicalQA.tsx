@@ -27,7 +27,8 @@ const MedicalQA: React.FC = () => {
 
         <div className="demo-panel" style={{ textAlign: 'center', justifyContent: 'center' }}>
           <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🩺</div>
-          <h2>Live Inference Coming Soon...</h2>
+          {/* <h2>Live Inference Coming Soon...</h2> */}
+          <h2>Due to GPU resource limitations, live inference is not available</h2>
         </div>
       </div>
     </div>

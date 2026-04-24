@@ -25,7 +25,8 @@ const Hero: React.FC = () => (
       <div className="hero-text-content">
         <h1 className="hero-title">Junyi Shen</h1>
         <p className="hero-subtitle">
-          Software Engineer | AI Engineer | Full Stack Developer
+          {/* Software Engineer | AI Engineer | Full Stack Developer */}
+          Senior Software Engineer, NetEase Games
           <br />
           Master of Computer Science, University of Otago
         </p>
@@ -198,7 +199,7 @@ const Home: React.FC = () => {
       <Hero />
       <InteractiveProjects />
       <ProjectsGrid />
-      <AboutAndSkills />
+      {/* <AboutAndSkills /> */}
       <CareerMilestones />
       <section className="portfolio-stack-section">
         <div className="stack-content">
