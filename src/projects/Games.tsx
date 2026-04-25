@@ -241,9 +241,37 @@ const Games: React.FC = () => {
       aspect: 'portrait'
     },
     {
+      id: 'fight-2048',
+      title: "Oulabu's Dream",
+      role: 'Contract — Unity / C#',
+      description:
+        'A merge-RPG where players combine units to evolve their power. Features include character upgrades, multiple levels, and strategic mid-battle skill boosts.',
+      officialUrl: 'https://www.taptap.cn/app/219376?os=android',
+      videoUrls: [
+        '/assets/projects/fight_2048/video.mp4'
+      ],
+      tags: ['Unity', 'C#', 'Game Design']
+    },
+    {
+      id: 'bumper-car',
+      title: 'Bumper Car',
+      role: 'Contract — Unity / C#',
+      description:
+        'A casual game where you control a bumper car and try to knock opponents out of the arena to be the last one standing. Collect stars to grow stronger and pick up tools like rockets and freeze to gain advantages.',
+      // githubUrl: 'https://github.com/junyishen/BumperCar',
+      officialUrl: 'https://www.taptap.cn/app/203577?os=android',
+      videoUrls: [
+        '/assets/projects/bumper_car/video.mp4'
+      ],
+      imageUrls: [
+      ],
+      tags: ['Unity', 'C#', 'Physics'],
+      aspect: 'portrait'
+    },
+    {
       id: 'magic-road',
       title: 'Magic Road',
-      role: 'Contract — Unity / C#',
+      role: 'Individual Project — Unity / C#',
       description:
         'An interactive hyper-casual game where players dynamically draw roads to control the car\'s path and navigate obstacles in real time.',
       githubUrl: 'https://github.com/junyishen/DrawRoadGame',
@@ -255,33 +283,6 @@ const Games: React.FC = () => {
       ],
       tags: ['Unity', 'C#', '3D'],
       aspect: 'portrait'
-    },
-    {
-      id: 'bumper-car',
-      title: 'Bumper Car',
-      role: 'Contract — Unity / C#',
-      description:
-        'A casual game where you control a bumper car and try to knock opponents out of the arena to be the last one standing. Collect stars to grow stronger and pick up tools like rockets and freeze to gain advantages.',
-      githubUrl: 'https://github.com/junyishen/BumperCar',
-      videoUrls: [
-        '/assets/projects/bumper_car/video.mp4'
-      ],
-      imageUrls: [
-      ],
-      tags: ['Unity', 'C#', 'Physics'],
-      aspect: 'portrait'
-    },
-    {
-      id: 'fight-2048',
-      title: "Oulabu's Dream",
-      role: 'Contract — Unity / C#',
-      description:
-        'A merge-RPG where players combine units to evolve their power. Features include character upgrades, multiple levels, and strategic mid-battle skill boosts.',
-      officialUrl: 'https://www.taptap.cn/app/219376?os=android',
-      videoUrls: [
-        '/assets/projects/fight_2048/video.mp4'
-      ],
-      tags: ['Unity', 'C#', 'Game Design']
     },
     {
       id: 'teeth-guardian',
