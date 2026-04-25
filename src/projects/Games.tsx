@@ -244,7 +244,7 @@ const Games: React.FC = () => {
       title: 'Magic Road',
       role: 'Contract — Unity / C#',
       description:
-        '3D casual runner featuring procedural track generation, object pooling, and mobile performance optimizations. Implemented gameplay logic, asset streaming, and polish for smooth frame rates on constrained devices.',
+        'An interactive hyper-casual game where players dynamically draw roads to control the car\'s path and navigate obstacles in real time.',
       githubUrl: 'https://github.com/junyishen/DrawRoadGame',
       videoUrls: [
         '/assets/projects/magic_road/video1.MP4',
@@ -260,7 +260,7 @@ const Games: React.FC = () => {
       title: 'Bumper Car',
       role: 'Contract — Unity / C#',
       description:
-        'Arena-based bumper car experience with custom vehicle physics and responsive collision handling. Focused on deterministic interactions and performant simulation.',
+        'A casual game where you control a bumper car and try to knock opponents out of the arena to be the last one standing. Collect stars to grow stronger and pick up tools like rockets and freeze to gain advantages.',
       githubUrl: 'https://github.com/junyishen/BumperCar',
       videoUrls: [
         '/assets/projects/bumper_car/video.mp4'
