@@ -216,6 +216,7 @@ const Games: React.FC = () => {
         '/assets/projects/onmyoji/scene.jpg',
         '/assets/projects/onmyoji/lbs2.jpg',
         '/assets/projects/onmyoji/lbs_style.jpg',
+        '/assets/projects/onmyoji/lbs_3d.jpg',
       ],
       tags: ['C++', 'Python', 'NeoX Engine', 'LBS'],
       aspect: 'landscape'
