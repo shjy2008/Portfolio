@@ -8,6 +8,26 @@ interface Message {
   content: string;
 }
 
+const ALL_SUGGESTED_QUESTIONS = [
+  "What are the common symptoms of a cold vs the flu?",
+  "How can I improve my sleep quality?",
+  "What are the best ways to lower high blood pressure naturally?",
+  "What should I do if I have a persistent headache?",
+  "How many glasses of water should I drink every day?",
+  "What are some healthy snacks for weight loss?",
+  "How can I tell if a wound is infected?",
+  "What are the early signs of pregnancy?",
+  "How do I relieve seasonal allergy symptoms?",
+  "What are the benefits of regular exercise?",
+  "How can I manage daily stress and anxiety?",
+  "What are the first aid steps for a minor burn?"
+];
+
+const getRandomSuggestions = (count: number) => {
+  const shuffled = [...ALL_SUGGESTED_QUESTIONS].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
+};
+
 const MedicalQA: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -15,6 +35,11 @@ const MedicalQA: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isModelInitializing, setIsModelInitializing] = useState(true);
   const [isAtBottom, setIsAtBottom] = useState(true);
+  const [currentSuggestions, setCurrentSuggestions] = useState<string[]>([]);
+
+  useEffect(() => {
+    setCurrentSuggestions(getRandomSuggestions(4));
+  }, []);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
   const chatHistoryRef = useRef<HTMLDivElement>(null);
@@ -35,21 +60,22 @@ const MedicalQA: React.FC = () => {
     if (!container) return;
 
     const { scrollTop, scrollHeight, clientHeight } = container;
-    // Check if user is at the bottom (with a small 5px margin for rounding)
-    const atBottom = scrollHeight - scrollTop - clientHeight < 5;
+    // Check if user is at the bottom (with a more generous 30px margin for reliability)
+    const atBottom = scrollHeight - scrollTop - clientHeight < 30;
     setIsAtBottom(atBottom);
   };
 
   useEffect(() => {
     if (isAtBottom) {
-      chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      chatEndRef.current?.scrollIntoView({ behavior: 'auto' });
     }
-  }, [messages, isAtBottom]);
+    // Use a stable-length dependency array to prevent React hook errors
+  }, [messages.length, messages[messages.length - 1], isAtBottom, currentSuggestions.length, loading]);
 
-  const handleSend = async () => {
-    if (!input.trim() || loading) return;
+  const handleSend = async (overrideMessage?: string) => {
+    const userMessage = (overrideMessage || input).trim();
+    if (!userMessage || loading) return;
 
-    const userMessage = input.trim();
     setInput('');
     setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
     setLoading(true);
@@ -100,12 +126,15 @@ const MedicalQA: React.FC = () => {
           if (updated.length > 0) {
             updated[updated.length - 1] = {
               ...updated[updated.length - 1],
-              content: accumulatedContent
+              content: accumulatedContent.trimStart()
             };
           }
           return updated;
         });
       }
+
+      // Refresh suggestions after completion
+      setCurrentSuggestions(getRandomSuggestions(4));
 
     } catch (err: any) {
       setError(err.message);
@@ -119,18 +148,24 @@ const MedicalQA: React.FC = () => {
       <Link href="/?from=projects" className="back-link">← Back to Home</Link>
       <div className="project-header">
         <h1 className="project-title">LLM+RAG Medical Q&A</h1>
-        <p className="project-subtitle">Beyond SOTA: Phi-3-mini Augmented Medical Bot</p>
+        <p className="project-subtitle">Beyond SOTA accuracy with fine-tuned Phi-3-mini + multi-stage RAG</p>
       </div>
 
       <div className="project-content">
         <div className="info-panel">
           <h3>Architectural Overview</h3>
           <p>
-            A high-performance Retreival-Augmented Generation (RAG) system built to answer complex medical questions.
+            <strong>Beyond SOTA Accuracy:</strong> Built a Phi-3-mini (3.8B) LLM+RAG pipeline that improved accuracy from 53.4% to <b>76.5% on MedQA dataset</b>, surpassing all published models under 10B parameters.
           </p>
           <ul>
-            <li><b>LLM Fine-tuning:</b> Two-phase fine-tuning on Microsoft's Phi-3-mini (3.8B) using the 410k UltraMedical dataset.</li>
-            <li><b>RAG Pipeline:</b> Multi-stage retrieval combining BM25, SPLADE, and dense embeddings with re-ranking.</li>
+            <li>
+              <b>LLM:</b> Applied a two-phase fine-tuning strategy using Hugging Face Transformers:
+              (1) domain-specific fine-tuning on the 410k UltraMedical dataset to provide foundational medical knowledge, and
+              (2) context-aware fine-tuning to improve utilization of retrieved documents.
+            </li>
+            <li>
+              <b>RAG:</b> Built a C++ BM25 search engine over 23M PubMed abstracts and a multi-stage retrieval pipeline integrating BM25, SPLADE sparse retrieval, dense embeddings, and pointwise/listwise re-ranking, with a majority-voting ensemble.
+            </li>
             <li><b>Real-time Inference:</b> vLLM serving on Modal's serverless GPU for low-latency responses.</li>
           </ul>
         </div>
@@ -140,20 +175,31 @@ const MedicalQA: React.FC = () => {
             <div className="initialization-overlay">
               <div className="pulse-icon">🩺</div>
               <div className="status-message">
-                The Medical QA model is initializing. This can take about 60 seconds during a cold start.
+                The Medical Q&A model is initializing. This can take about 60 seconds during a cold start.
               </div>
             </div>
           ) : (
             <>
-              <div 
-                className="chat-history" 
+              <div
+                className="chat-history"
                 ref={chatHistoryRef}
                 onScroll={handleScroll}
               >
                 {messages.length === 0 && (
-                  <div style={{ textAlign: 'center', color: 'var(--text-muted)', marginTop: '2rem' }}>
+                  <div className="empty-chat-state">
                     <p>Ask a medical question to start the conversation.</p>
-                    <p style={{ fontSize: '0.8rem' }}>Example: "What are the common treatments for diabetes?"</p>
+                    <div className="suggested-questions">
+                      {currentSuggestions.map((q, i) => (
+                        <button
+                          key={i}
+                          className="suggestion-chip"
+                          onClick={() => handleSend(q)}
+                          disabled={loading}
+                        >
+                          {q}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 )}
                 {messages.map((msg, idx) => (
@@ -161,6 +207,22 @@ const MedicalQA: React.FC = () => {
                     {msg.content}
                   </div>
                 ))}
+                {!loading && messages.length > 0 && (
+                  <div className="follow-up-suggestions">
+                    <p className="suggestion-label">Suggested questions:</p>
+                    <div className="suggested-questions">
+                      {currentSuggestions.map((q, i) => (
+                        <button
+                          key={i}
+                          className="suggestion-chip"
+                          onClick={() => handleSend(q)}
+                        >
+                          {q}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 {loading && (messages.length === 0 || messages[messages.length - 1].role !== 'bot') && (
                   <div className="message bot-message loading">
                     Thinking...
