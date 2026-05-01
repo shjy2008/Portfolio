@@ -269,7 +269,7 @@ const MedicalQA: React.FC = () => {
                 />
                 <button
                   className="send-button"
-                  onClick={handleSend}
+                  onClick={() => handleSend()}
                   disabled={loading || !input.trim()}
                 >
                   {loading ? '...' : 'Send'}
