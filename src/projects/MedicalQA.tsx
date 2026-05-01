@@ -9,18 +9,29 @@ interface Message {
 }
 
 const ALL_SUGGESTED_QUESTIONS = [
-  "What are the common symptoms of a cold vs the flu?",
-  "How can I improve my sleep quality?",
-  "What are the best ways to lower high blood pressure naturally?",
-  "What should I do if I have a persistent headache?",
-  "How many glasses of water should I drink every day?",
-  "What are some healthy snacks for weight loss?",
-  "How can I tell if a wound is infected?",
-  "What are the early signs of pregnancy?",
-  "How do I relieve seasonal allergy symptoms?",
-  "What are the benefits of regular exercise?",
-  "How can I manage daily stress and anxiety?",
-  "What are the first aid steps for a minor burn?"
+  // 1/3 Very Easy (General daily questions)
+  "How many glasses of water should I drink every day for hydration?",
+  "What are some healthy snacks that help with weight loss?",
+  "How can I improve my sleep quality naturally at home?",
+  "What are some simple ways to reduce daily stress and anxiety?",
+  "How often should I exercise to maintain a healthy heart?",
+  "What are the best foods to eat for a balanced breakfast?",
+
+  // 1/3 Understandable (Medical but simple)
+  "What is the difference between common cold and flu symptoms?",
+  "How can I tell if a minor cut or wound is becoming infected?",
+  "When is a fever considered high enough to see a doctor?",
+  "What are the early warning signs of seasonal allergies?",
+  "How does vitamin D affect my bone health and immune system?",
+  "What is the best way to manage a persistent tension headache?",
+
+  // 1/3 Professional (Clinical/Technical)
+  "How do ACE inhibitors help protect kidney function in diabetics?",
+  "What is the clinical significance of an elevated HbA1c level?",
+  "How do SSRIs work in the brain to treat clinical depression?",
+  "What are the primary differences between osteoarthritis and rheumatoid arthritis?",
+  "What are the diagnostic indicators for metabolic syndrome?",
+  "Can you explain the mechanism of insulin resistance in Type 2 Diabetes?"
 ];
 
 const getRandomSuggestions = (count: number) => {
@@ -66,11 +77,10 @@ const MedicalQA: React.FC = () => {
   };
 
   useEffect(() => {
-    if (isAtBottom) {
-      chatEndRef.current?.scrollIntoView({ behavior: 'auto' });
+    if (isAtBottom && chatHistoryRef.current) {
+      chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight;
     }
-    // Use a stable-length dependency array to prevent React hook errors
-  }, [messages.length, messages[messages.length - 1], isAtBottom, currentSuggestions.length, loading]);
+  }, [messages, isAtBottom, currentSuggestions, loading]);
 
   const handleSend = async (overrideMessage?: string) => {
     const userMessage = (overrideMessage || input).trim();
@@ -202,11 +212,25 @@ const MedicalQA: React.FC = () => {
                     </div>
                   </div>
                 )}
-                {messages.map((msg, idx) => (
-                  <div key={idx} className={`message ${msg.role === 'user' ? 'user-message' : 'bot-message'}`}>
-                    {msg.content}
-                  </div>
-                ))}
+                {messages.map((msg, idx) => {
+                  const isLastMessage = idx === messages.length - 1;
+                  const isStreamingBot = loading && isLastMessage && msg.role === 'bot';
+
+                  return (
+                    <div
+                      key={idx}
+                      className={`message ${msg.role === 'user' ? 'user-message' : 'bot-message'} ${isStreamingBot ? 'streaming' : ''}`}
+                    >
+                      {isStreamingBot ? (
+                        msg.content.split(/(\s+)/).map((part, i) => (
+                          <span key={i} className="word-fade">{part}</span>
+                        ))
+                      ) : (
+                        msg.content
+                      )}
+                    </div>
+                  );
+                })}
                 {!loading && messages.length > 0 && (
                   <div className="follow-up-suggestions">
                     <p className="suggestion-label">Suggested questions:</p>

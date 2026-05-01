@@ -38,9 +38,36 @@
   max-width: 85%;
   line-height: 1.6;
   font-size: 0.95rem;
-  animation: fadeIn 0.3s ease-out;
+  animation: messageFadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   white-space: pre-wrap;
+}
+
+@keyframes messageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.word-fade {
+  display: inline;
+  animation: wordFadeIn 0.3s ease-out forwards;
+}
+
+@keyframes wordFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .user-message {
@@ -179,6 +206,15 @@
 .suggestion-chip:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .follow-up-suggestions {
