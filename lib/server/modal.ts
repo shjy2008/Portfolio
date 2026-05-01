@@ -16,6 +16,12 @@ export function getModalSearchBase(): string {
   return base.replace(/\/$/, '');
 }
 
+export function getModalPhi3Base(): string {
+  const base = process.env.MODAL_PHI3_BASE_URL;
+  if (!base) throw new Error('MODAL_PHI3_BASE_URL is not set in the environment');
+  return base.replace(/\/$/, '');
+}
+
 export function getModalHeaders(): Record<string, string> {
   const headers: Record<string, string> = {};
 

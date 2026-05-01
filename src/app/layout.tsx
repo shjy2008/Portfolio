@@ -8,6 +8,7 @@ import '../projects/FlowerVision.css';
 import '../SearchEngine/SearchEngine.css';
 import '../components/Navbar.css';
 import '../projects/Games.css';
+import '../projects/MedicalQA.css';
 
 import Navbar from '../components/Navbar';
 import ScrollToTop from '../components/ScrollToTop';
