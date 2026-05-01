@@ -32,8 +32,20 @@ export async function POST(request: Request) {
       );
     }
 
-    const data = await upstream.json();
-    return Response.json(data);
+    if (!upstream.body) {
+      return Response.json(
+        { code: 'UPSTREAM_INFERENCE_FAILED', message: 'No body returned from upstream' },
+        { status: 502 }
+      );
+    }
+
+    return new Response(upstream.body, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+      },
+    });
   } catch (error: any) {
     return Response.json(
       { code: 'INTERNAL_SERVER_ERROR', message: error.message },

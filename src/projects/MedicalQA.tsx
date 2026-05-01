@@ -14,8 +14,10 @@ const MedicalQA: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isModelInitializing, setIsModelInitializing] = useState(true);
+  const [isAtBottom, setIsAtBottom] = useState(true);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const chatHistoryRef = useRef<HTMLDivElement>(null);
   const hasFetchedHealth = useRef(false);
 
   useEffect(() => {
@@ -27,9 +29,22 @@ const MedicalQA: React.FC = () => {
     });
   }, []);
 
+  // Handle manual scrolling to toggle auto-scroll
+  const handleScroll = () => {
+    const container = chatHistoryRef.current;
+    if (!container) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = container;
+    // Check if user is at the bottom (with a small 5px margin for rounding)
+    const atBottom = scrollHeight - scrollTop - clientHeight < 5;
+    setIsAtBottom(atBottom);
+  };
+
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    if (isAtBottom) {
+      chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages, isAtBottom]);
 
   const handleSend = async () => {
     if (!input.trim() || loading) return;
@@ -46,8 +61,8 @@ const MedicalQA: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           prompt: userMessage,
-          max_tokens: 512,
-          temperature: 0.7
+          max_tokens: 1024,
+          temperature: 0.0
         }),
       });
 
@@ -60,9 +75,38 @@ const MedicalQA: React.FC = () => {
         throw new Error(payload?.message || 'Failed to get response from model');
       }
 
-      const data = await response.json();
-      setMessages(prev => [...prev, { role: 'bot', content: data.response || data.text || 'No response received.' }]);
+      if (!response.body) {
+        throw new Error('No response body received from stream');
+      }
+
+      // Add an empty bot message placeholder
+      setMessages(prev => [...prev, { role: 'bot', content: '' }]);
       setIsModelInitializing(false);
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let accumulatedContent = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        accumulatedContent += chunk;
+
+        // Update the last message (the bot placeholder) with the newly arrived chunk
+        setMessages(prev => {
+          const updated = [...prev];
+          if (updated.length > 0) {
+            updated[updated.length - 1] = {
+              ...updated[updated.length - 1],
+              content: accumulatedContent
+            };
+          }
+          return updated;
+        });
+      }
+
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -101,7 +145,11 @@ const MedicalQA: React.FC = () => {
             </div>
           ) : (
             <>
-              <div className="chat-history">
+              <div 
+                className="chat-history" 
+                ref={chatHistoryRef}
+                onScroll={handleScroll}
+              >
                 {messages.length === 0 && (
                   <div style={{ textAlign: 'center', color: 'var(--text-muted)', marginTop: '2rem' }}>
                     <p>Ask a medical question to start the conversation.</p>
@@ -113,7 +161,7 @@ const MedicalQA: React.FC = () => {
                     {msg.content}
                   </div>
                 ))}
-                {loading && (
+                {loading && (messages.length === 0 || messages[messages.length - 1].role !== 'bot') && (
                   <div className="message bot-message loading">
                     Thinking...
                   </div>
